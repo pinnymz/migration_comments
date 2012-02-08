@@ -1,15 +1,38 @@
 require "migration_comments/version"
 
-module MigrationComments
-  # Your code goes here...
-end
+require 'migration_comments/active_record/base'
+require 'migration_comments/active_record/schema'
+require 'migration_comments/active_record/schema_dumper'
+require 'migration_comments/active_record/connection_adapters/comment_definition'
+require 'migration_comments/active_record/connection_adapters/column_definition'
+require 'migration_comments/active_record/connection_adapters/table'
+require 'migration_comments/active_record/connection_adapters/table_definition'
+require 'migration_comments/active_record/connection_adapters/abstract_adapter'
+require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
 
-#ActiveRecord::Base.send(:include, MigrationComments::ActiveRecord::Base)
-#ActiveRecord::Schema.send(:include, MigrationComments::ActiveRecord::Schema)
-#ActiveRecord::SchemaDumper.send(:include, MigrationComments::ActiveRecord::SchemaDumper)
-ActiveRecord::ConnectionAdapters::Table.send(:include, MigrationComments::ActiveRecord::ConnectionAdapters::Table)
-ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, MigrationComments::ActiveRecord::ConnectionAdapters::TableDefinition)
-ActiveRecord::ConnectionAdapters::Column.send(:include, MigrationComments::ActiveRecord::ConnectionAdapters::Column)
-ActiveRecord::ConnectionAdapters::ColumnDefinition.send(:include, MigrationComments::ActiveRecord::ConnectionAdapters::ColumnDefinition)
-ActiveRecord::ConnectionAdapters::AbstractAdapter.send(:include, MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter)
-ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.send(:include, MigrationComments::ActiveRecord::ConnectionAdapters::PostgresqlAdapter)
+module MigrationComments
+  def self.setup
+    base_names = %w(Base Schema SchemaDumper) +
+      %w(ColumnDefinition Table TableDefinition AbstractAdapter).map{|name| "ConnectionAdapters::#{name}"}
+
+    base_names.each do |base_name|
+      ar_class = "ActiveRecord::#{base_name}".constantize
+      mc_class = "MigrationComments::ActiveRecord::#{base_name}".constantize
+      unless ar_class.ancestors.include?(mc_class)
+        ar_class.__send__(:include, mc_class)
+      end
+    end
+
+    %w(PostgreSQL).each do |adapter|
+      begin
+        require("active_record/connection_adapters/#{adapter.downcase}_adapter")
+        adapter_class = ('ActiveRecord::ConnectionAdapters::' << "#{adapter}Adapter").constantize
+        mc_class = ('MigrationComments::ActiveRecord::ConnectionAdapters::' << "#{adapter}Adapter").constantize
+        adapter_class.module_eval do
+          adapter_class.__send__(:include, mc_class)
+        end
+      rescue Exception => ex
+      end
+    end
+  end
+end

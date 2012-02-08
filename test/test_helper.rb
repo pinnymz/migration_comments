@@ -1,4 +1,8 @@
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'test/unit'
+
+require 'rubygems'
+gem 'activerecord', '>= 2.3.2'
+require 'active_record'
 
 ActiveRecord::Base.establish_connection(
     :adapter => "postgresql",
@@ -8,9 +12,22 @@ ActiveRecord::Base.establish_connection(
     :password => "postgres"
 )
 
-ActiveRecord::Schema.define(:version => 1) do
-  create_table :posts do |t|
-    t.string :title
-    t.text :excerpt, :body
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require File.join(File.dirname(__FILE__), '..', 'init')
+
+module TestHelper
+  def setup
+    ActiveRecord::Schema.define do
+      create_table :sample do |t|
+        t.string :field1
+        t.integer :field2
+      end
+    end
+  end
+
+  def teardown
+    ActiveRecord::Schema.define do
+      drop_table :sample
+    end
   end
 end

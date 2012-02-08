@@ -1,5 +1,5 @@
 module MigrationComments::ActiveRecord::ConnectionAdapters
-  class CommentDefinition < Struct.new(:table, :column_name, :comment_text)
+  class CommentDefinition < Struct.new(:adapter, :table, :column_name, :comment_text)
     def to_dump
       table_comment? ?
           "add_table_comment :#{table_name}, %{#{comment_text}}" :
@@ -22,8 +22,8 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     private
     def comment_target
       table_comment? ?
-          "TABLE #{@base.quote_table_name(table_name)}" :
-          "COLUMN #{@base.quote_table_name(table_name)}.#{@base.quote_column_name(column_name)}"
+          "TABLE #{adapter.quote_table_name(table_name)}" :
+          "COLUMN #{adapter.quote_table_name(table_name)}.#{adapter.quote_column_name(column_name)}"
     end
 
     def escaped(comment)

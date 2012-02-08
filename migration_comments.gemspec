@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency 'rails', '~> 2.3', '>= 2.3.2'
+  s.add_development_dependency 'postgres-pr'
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
