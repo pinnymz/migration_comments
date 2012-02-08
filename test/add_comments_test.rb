@@ -33,8 +33,7 @@ class AddCommentsTest < Test::Unit::TestCase
     result_column_comments = nil
     ActiveRecord::Schema.define do
       begin
-        create_table :sample2 do |t|
-          t.comment table_comment
+        create_table :sample2, :comment => table_comment do |t|
           t.integer :field1, :comment => column_comment
           t.string :field2
         end

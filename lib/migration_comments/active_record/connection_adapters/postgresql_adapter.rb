@@ -38,13 +38,13 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
 
-    def create_table_with_migration_comments(*args, &block)
+    def create_table_with_migration_comments(table_name, options = {}, &block)
       local_table_definition = nil
-      create_table_without_migration_comments(*args) do |td|
-        block.call(td)
+      create_table_without_migration_comments(table_name, options) do |td|
         local_table_definition = td
+        local_table_definition.comment options[:comment] if options.has_key?(:comment)
+        block.call(td)
       end
-      table_name = args[0]
       comments = local_table_definition.collect_comments(table_name)
       comments.each do |comment_definition|
         execute comment_definition.to_sql
