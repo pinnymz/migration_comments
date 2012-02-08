@@ -35,6 +35,7 @@ module MigrationComments
 
     require 'annotate/annotate_models'
     gem_class = AnnotateModels
+    # don't require this until after the original AnnotateModels loads to avoid namespace confusion
     require 'migration_comments/annotate_models'
     mc_class = MigrationComments::AnnotateModels
     unless gem_class.ancestors.include?(mc_class)
