@@ -131,4 +131,5 @@ class AddCommentsTest < Test::Unit::TestCase
     end
     assert_equal comment_text, result
   end
+
 end
