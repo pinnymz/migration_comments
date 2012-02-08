@@ -1,7 +1,5 @@
 require "migration_comments/version"
 
-require 'migration_comments/active_record/base'
-require 'migration_comments/active_record/schema'
 require 'migration_comments/active_record/schema_dumper'
 require 'migration_comments/active_record/connection_adapters/comment_definition'
 require 'migration_comments/active_record/connection_adapters/column_definition'
@@ -12,7 +10,7 @@ require 'migration_comments/active_record/connection_adapters/postgresql_adapter
 
 module MigrationComments
   def self.setup
-    base_names = %w(Base Schema SchemaDumper) +
+    base_names = %w(SchemaDumper) +
       %w(ColumnDefinition Table TableDefinition AbstractAdapter).map{|name| "ConnectionAdapters::#{name}"}
 
     base_names.each do |base_name|
@@ -33,6 +31,14 @@ module MigrationComments
         end
       rescue Exception => ex
       end
+    end
+
+    require 'annotate/annotate_models'
+    gem_class = AnnotateModels
+    require 'migration_comments/annotate_models'
+    mc_class = MigrationComments::AnnotateModels
+    unless gem_class.ancestors.include?(mc_class)
+      gem_class.__send__(:include, mc_class)
     end
   end
 end

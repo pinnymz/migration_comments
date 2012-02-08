@@ -25,5 +25,17 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     def remove_column_comment(table_name, column_name)
       add_column_comment(table_name, column_name, nil)
     end
+
+    def retrieve_table_comment(table_name)
+      nil
+    end
+
+    def retrieve_column_comments(table_name, *column_names)
+      {}
+    end
+
+    def retrieve_column_comment(table_name, column_name)
+      retrieve_column_comments(table_name, column_name)[column_name]
+    end
   end
 end

@@ -27,7 +27,7 @@ module MigrationComments::ActiveRecord
         content = line.chomp
         if content =~ /create_table\s/
           table_line = lines.size
-        elsif content =~ /t\.\w*\s*"(\w*)"/
+        elsif content =~ /t\.\w+\s+"(\w+)"/
           col_names[lines.size] = $1.to_sym
         end
         lines << content
