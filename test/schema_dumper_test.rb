@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AddCommentsTest < Test::Unit::TestCase
+class SchemaDumperTest < Test::Unit::TestCase
   include TestHelper
 
   def test_dump

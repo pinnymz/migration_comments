@@ -19,10 +19,10 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency 'rails', '~> 2.3', '>= 2.3.2'
-  s.add_runtime_dependency 'annotate'
-  s.add_development_dependency 'postgres-pr'
-
-  # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  # for development, we are testing against the 'annotate' gem
+  # however, the comments should work with the original 'annotate_models' plugin as well at:
+  #  http://repo.pragprog.com/svn/Public/plugins/annotate_models
+  # provided the environment is not loaded until _after_ the AnnotateModels module is declared
+  s.add_development_dependency 'annotate'
+  s.add_development_dependency 'postgres-pr' # replace with any adapter as needed
 end

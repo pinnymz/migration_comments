@@ -33,13 +33,24 @@ module MigrationComments
       end
     end
 
-    require 'annotate/annotate_models'
-    gem_class = AnnotateModels
-    # don't require this until after the original AnnotateModels loads to avoid namespace confusion
-    require 'migration_comments/annotate_models'
-    mc_class = MigrationComments::AnnotateModels
-    unless gem_class.ancestors.include?(mc_class)
-      gem_class.__send__(:include, mc_class)
+    # annotations are not required for this gem, but if they exist they should be updated
+    begin
+      begin # first try to load from the 'annotate' gem
+        require 'annotate/annotate_models'
+      rescue Exception => ex
+        # continue as it may be already accessible through a plugin
+      end
+      gem_class = AnnotateModels
+      # don't require this until after the original AnnotateModels loads to avoid namespace confusion
+      require 'migration_comments/annotate_models'
+      mc_class = MigrationComments::AnnotateModels
+      unless gem_class.ancestors.include?(mc_class)
+        gem_class.__send__(:include, mc_class)
+      end
+    rescue Exception => ex
+      # if we got here, don't bother installing comments into annotations
     end
   end
 end
+
+MigrationComments.setup

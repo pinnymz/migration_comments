@@ -1,2 +1,1 @@
 require 'migration_comments'
-MigrationComments.setup
