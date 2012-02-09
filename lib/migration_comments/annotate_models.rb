@@ -26,7 +26,7 @@ module MigrationComments
         column_regex = /^#\s+(\w+)\s+:\w+/
         len = lines.select{|l| l =~ column_regex}.map{|l| l.length}.max
         lines.each do |line|
-          if line =~ /Table name:/
+          if line =~ /# Table name: |# table \+\w+\+ /
             line << " # #{table_comment}" if table_comment
           elsif line =~ column_regex
             comment = column_comments[$1.to_sym]
