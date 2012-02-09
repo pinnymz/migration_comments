@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = MigrationComments::VERSION
   s.authors     = ["Pinny"]
   s.email       = ["pinny@medwiztech.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/pinnymz/migration_comments"
   s.summary     = %q{Comments for your migrations}
   s.description = %q{Add schema comments in your migrations, see them in model annotations and db/schema.rb dump}
 

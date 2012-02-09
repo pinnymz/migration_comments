@@ -13,7 +13,7 @@ ActiveRecord::Base.establish_connection(
 )
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
-require File.join(File.dirname(__FILE__), '..', 'init')
+require 'migration_comments'
 
 module TestHelper
   def setup
