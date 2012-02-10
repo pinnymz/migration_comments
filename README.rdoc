@@ -26,9 +26,9 @@ file.
 
 == Examples
 
-Want to add a comment to an existing structure...
+To add a comment to an existing structure...
 
-  self.up
+  def self.up
     add_table_comment :table_name, "A table comment"
     comment_table :table_name, "A table comment"                      # does the same thing
 
@@ -38,7 +38,7 @@ Want to add a comment to an existing structure...
 
 Or you can use the change_table macro...
 
-  self.up
+  def self.up
     change_table :table_name do |t|
       t.comment "A table comment"
       t.change_comment :column_name, "A column comment"
@@ -47,7 +47,7 @@ Or you can use the change_table macro...
 
 Creating a new table?
 
-  self.up
+  def self.up
     create_table :table_name, :comment => "A table comment" do |t|
       t.string :column_name, :comment => "A column comment"
     end
@@ -55,14 +55,14 @@ Creating a new table?
 
 You can also remove comments...
 
-  self.up
+  def self.up
     remove_table_comment :table_name
     remove_column_comment :table_name, :column_name
   end
 
 Or you can combine these commands while modifying a table...
 
-  self.up
+  def self.up
     change_table :existing_table do |t|
       t.comment nil                                       # remove an existing table comment
       t.string :new_column, :comment => "a new column"    # add a new column with a comment
