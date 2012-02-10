@@ -6,6 +6,8 @@ require 'migration_comments/active_record/connection_adapters/column_definition'
 require 'migration_comments/active_record/connection_adapters/table'
 require 'migration_comments/active_record/connection_adapters/table_definition'
 require 'migration_comments/active_record/connection_adapters/abstract_adapter'
+require 'migration_comments/active_record/connection_adapters/mysql_adapter'
+require 'migration_comments/active_record/connection_adapters/mysql2_adapter'
 require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
 
 module MigrationComments
@@ -21,7 +23,7 @@ module MigrationComments
       end
     end
 
-    %w(PostgreSQL).each do |adapter|
+    %w(PostgreSQL Mysql Mysql2).each do |adapter|
       begin
         require("active_record/connection_adapters/#{adapter.downcase}_adapter")
         adapter_class = ('ActiveRecord::ConnectionAdapters::' << "#{adapter}Adapter").constantize

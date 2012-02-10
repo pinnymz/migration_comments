@@ -60,7 +60,23 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       end
     end
 
+    def comment_sql(comment_definition)
+      "COMMENT ON #{comment_target(comment_definition)} IS #{escaped_comment(comment_definition.comment_text)}"
+    end
+
     private
+
+    private
+    def comment_target(comment_definition)
+      comment_definition.table_comment? ?
+          "TABLE #{quote_table_name(comment_definition.table_name)}" :
+          "COLUMN #{quote_table_name(comment_definition.table_name)}.#{quote_column_name(comment_definition.column_name)}"
+    end
+
+    def escaped_comment(comment)
+      comment.nil? ? 'NULL' : "'#{comment.gsub("'", "''")}'"
+    end
+
     def table_comment_sql(table_name)
       <<SQL
 SELECT d.description FROM (

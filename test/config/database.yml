@@ -1,0 +1,12 @@
+postgres:
+  adapter: postgresql
+  database: migration_comments_test
+  host: 127.0.0.1
+  username: postgres
+  password: postgres
+
+mysql:
+  adapter: mysql # mysql2
+  database: migration_comments_test
+  user: root
+  password: password
