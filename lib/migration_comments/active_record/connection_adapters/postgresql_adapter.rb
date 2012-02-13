@@ -23,12 +23,12 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
     def retrieve_table_comment(table_name)
-      result = execute(table_comment_sql(table_name)).result
+      result = select_rows(table_comment_sql(table_name))
       result[0].nil? ? nil : result[0][0]
     end
 
     def retrieve_column_comments(table_name, *column_names)
-      result = execute(column_comment_sql(table_name, *column_names)).result
+      result = select_rows(column_comment_sql(table_name, *column_names))
       return {} if result.nil?
       return result.inject({}){|m, row| m[row[0].to_sym] = row[1]; m}
     end

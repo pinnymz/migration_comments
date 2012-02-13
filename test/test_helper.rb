@@ -7,7 +7,9 @@ require 'yaml'
 
 CONFIGURATIONS = YAML::load(IO.read('config/database.yml'))
 
-ActiveRecord::Base.establish_connection(CONFIGURATIONS[ENV['DB'] || 'postgres'])
+ENV['DB'] ||= 'postgres' # override as needed
+
+ActiveRecord::Base.establish_connection(CONFIGURATIONS[ENV['DB']])
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 require 'migration_comments'

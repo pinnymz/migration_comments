@@ -90,7 +90,7 @@ SQL
     def ensure_database_name
       return if database_name
       info = YAML::load(IO.read('config/database.yml'))
-      @database_name = info[ENV['DB'] || RAILS_ENV]["database"]
+      @database_name = info[ENV['DB'] || Rails.env.to_s]["database"]
     end
 
   end
