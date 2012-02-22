@@ -134,7 +134,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
     def lookup_comment_sql(table_name)
-      "select sql from (select * from sqlite_master union select * from sqlite_temp_master) where tbl_name = '#{table_name}'"
+      "select sql from (select * from sqlite_master where type='table' union select * from sqlite_temp_master where type='table') where tbl_name = '#{table_name}'"
     end
   end
 end

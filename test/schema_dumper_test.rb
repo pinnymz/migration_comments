@@ -16,7 +16,7 @@ class SchemaDumperTest < Test::Unit::TestCase
     ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, dest)
     dest.rewind
     result = dest.read
-    default_expected = <<EOS
+    expected = <<EOS
 ActiveRecord::Schema.define(:version => 1) do
 
   create_table "sample", :force => true, :comment => "a table comment" do |t|
@@ -28,19 +28,6 @@ ActiveRecord::Schema.define(:version => 1) do
 end
 EOS
 
-    sqlite_expected = <<EOS
-ActiveRecord::Schema.define() do
-
-  create_table "sample", :force => true, :comment => "a table comment" do |t|
-    t.string  "field1",                                 :comment => "a \"comment\" \\ that ' needs; escaping''"
-    t.integer "field2"
-    t.string  "field3", :default => "", :null => false, :comment => "third column comment"
-  end
-
-end
-EOS
-
-    expected = instance_eval "#{db_type}_expected"
     assert_match /#{Regexp.escape expected}/, result
   end
 end
