@@ -7,7 +7,7 @@ class AddCommentsTest < Test::Unit::TestCase
     comment_text = "a comment on the sample table"
     result = nil
     ActiveRecord::Schema.define do
-      add_table_comment :sample, comment_text
+      set_table_comment :sample, comment_text
       result = retrieve_table_comment :sample
     end
     assert_equal comment_text, result
@@ -18,7 +18,7 @@ class AddCommentsTest < Test::Unit::TestCase
     result_field1 = nil
     result_field2 = nil
     ActiveRecord::Schema.define do
-      add_column_comment :sample, :field1, comment_text
+      set_column_comment :sample, :field1, comment_text
       result_field1 = retrieve_column_comment :sample, :field1
       result_field2 = retrieve_column_comment :sample, :field2
     end
@@ -104,7 +104,7 @@ class AddCommentsTest < Test::Unit::TestCase
     comment_text = "a comment on the sample table"
     result = nil
     ActiveRecord::Schema.define do
-      add_table_comment :sample, comment_text
+      set_table_comment :sample, comment_text
       remove_table_comment :sample
       result = retrieve_table_comment :sample
     end
@@ -115,7 +115,7 @@ class AddCommentsTest < Test::Unit::TestCase
     comment_text = "a comment on field1 of sample table"
     result = nil
     ActiveRecord::Schema.define do
-      add_column_comment :sample, :field1, comment_text
+      set_column_comment :sample, :field1, comment_text
       remove_column_comment :sample, :field1
       result = retrieve_column_comment :sample, :field1
     end
@@ -126,7 +126,7 @@ class AddCommentsTest < Test::Unit::TestCase
     comment_text = "a \"comment\" \\ that ' needs; escaping''"
     result = nil
     ActiveRecord::Schema.define do
-      add_table_comment :sample, comment_text
+      set_table_comment :sample, comment_text
       result = retrieve_table_comment :sample
     end
     assert_equal comment_text, result

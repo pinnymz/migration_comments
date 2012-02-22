@@ -32,11 +32,8 @@ file.
 To add a comment to an existing structure...
 
   def self.up
-    add_table_comment :table_name, "A table comment"
-    comment_table :table_name, "A table comment"                      # does the same thing
-
-    add_column_comment :table_name, :column_name, "A column comment"
-    comment_column  :table_name, :column_name, "A column comment"     # does the same thing
+    set_table_comment :table_name, "A table comment"
+    set_column_comment :table_name, :column_name, "A column comment"
   end
 
 Or you can use the change_table macro...

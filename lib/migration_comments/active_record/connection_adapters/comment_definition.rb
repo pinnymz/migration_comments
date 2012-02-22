@@ -2,8 +2,8 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
   class CommentDefinition < Struct.new(:adapter, :table, :column_name, :comment_text)
     def to_dump
       table_comment? ?
-          "add_table_comment :#{table_name}, %{#{comment_text}}" :
-          "add_column_comment :#{table_name}, :#{column_name}, %{#{comment_text}}"
+          "set_table_comment :#{table_name}, %{#{comment_text}}" :
+          "set_column_comment :#{table_name}, :#{column_name}, %{#{comment_text}}"
     end
 
     def to_sql

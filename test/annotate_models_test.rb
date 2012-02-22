@@ -16,8 +16,8 @@ class AnnotateModelsTest < Test::Unit::TestCase
     ActiveRecord::Schema.define do
       db_type = :mysql if connection.is_a?(ActiveRecord::ConnectionAdapters::MysqlAdapter) rescue false
 
-      add_table_comment :sample, "a table comment"
-      add_column_comment :sample, :field1, "a \"comment\" \\ that ' needs; escaping''"
+      set_table_comment :sample, "a table comment"
+      set_column_comment :sample, :field1, "a \"comment\" \\ that ' needs; escaping''"
       add_column :sample, :field3, :string, :null => false, :default => '', :comment => "third column comment"
     end
 

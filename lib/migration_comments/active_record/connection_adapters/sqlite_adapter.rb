@@ -8,11 +8,11 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       end
     end
 
-    def add_table_comment(table_name, comment_text)
+    def set_table_comment(table_name, comment_text)
       alter_table(table_name, :comment => comment_text)
     end
 
-    def add_column_comment(table_name, column_name, comment_text)
+    def set_column_comment(table_name, column_name, comment_text)
       column = column_for(table_name, column_name)
       change_column table_name, column_name, column.sql_type, :comment => comment_text
     end

@@ -8,11 +8,11 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       end
     end
 
-    def add_table_comment(table_name, comment_text)
+    def set_table_comment(table_name, comment_text)
       execute "ALTER TABLE #{table_name} COMMENT #{escaped_comment(comment_text)}"
     end
 
-    def add_column_comment(table_name, column_name, comment_text)
+    def set_column_comment(table_name, column_name, comment_text)
       column = column_for(table_name, column_name)
       change_column table_name, column_name, column.sql_type, :comment => comment_text
     end
@@ -58,9 +58,9 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
 
     def execute_comment(comment_definition)
       if comment_definition.table_comment?
-        add_table_comment comment_definition.table_name, comment_definition.comment_text
+        set_table_comment comment_definition.table_name, comment_definition.comment_text
       else
-        add_column_comment comment_definition.table_name, comment_definition.column_name, comment_definition.comment_text
+        set_column_comment comment_definition.table_name, comment_definition.column_name, comment_definition.comment_text
       end
     end
 
