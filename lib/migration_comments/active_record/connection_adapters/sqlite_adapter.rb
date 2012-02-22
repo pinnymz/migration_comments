@@ -31,7 +31,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       result = select_rows(lookup_comment_sql(table_name))
       result[0][0] =~ /^CREATE (?:TEMPORARY )?TABLE "\w*" [^\(]*(?:\/\*.*\*\/ )?\((.*)\)[^\)]*$/
       col_defs = $1
-      comment_matches = col_defs.scan(/\"([^",]+)\"[^,]*\/\*(.+?)\*\//)
+      comment_matches = col_defs.scan(/"([^",]+)"[^,]*\/\*(.+?)\*\//)
       comment_matches.inject({}){|m, row| m[row.first.to_sym] = row.last; m}
     end
 
