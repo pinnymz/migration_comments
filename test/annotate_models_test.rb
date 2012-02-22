@@ -14,15 +14,15 @@ class AnnotateModelsTest < Test::Unit::TestCase
   def test_annotate_includes_comments
     db_type = :default
     ActiveRecord::Schema.define do
-      db_type = :postgres if connection.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) rescue false
+      db_type = :mysql if connection.is_a?(ActiveRecord::ConnectionAdapters::MysqlAdapter) rescue false
 
       add_table_comment :sample, "a table comment"
       add_column_comment :sample, :field1, "a \"comment\" \\ that ' needs; escaping''"
-      add_column :sample, :field3, :string, :null => false, :comment => "third column comment"
+      add_column :sample, :field3, :string, :null => false, :default => '', :comment => "third column comment"
     end
 
     result = AnnotateModels.get_schema_info(Sample, TEST_PREFIX)
-    postgres_expected = <<EOS
+    default_expected = <<EOS
 # #{TEST_PREFIX}
 #
 # Table name: sample # a table comment
@@ -30,11 +30,11 @@ class AnnotateModelsTest < Test::Unit::TestCase
 #  id     :integer         not null, primary key
 #  field1 :string(255)                           # a "comment" \\ that ' needs; escaping''
 #  field2 :integer
-#  field3 :string(255)     not null              # third column comment
+#  field3 :string(255)     default(""), not null # third column comment
 #
 
 EOS
-    default_expected = <<EOS
+    mysql_expected = <<EOS
 # #{TEST_PREFIX}
 #
 # Table name: sample # a table comment
@@ -42,7 +42,7 @@ EOS
 #  id     :integer(4)      not null, primary key
 #  field1 :string(255)                           # a "comment" \\ that ' needs; escaping''
 #  field2 :integer(4)
-#  field3 :string(255)     not null              # third column comment
+#  field3 :string(255)     default(""), not null # third column comment
 #
 
 EOS

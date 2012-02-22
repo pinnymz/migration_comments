@@ -4,7 +4,7 @@ Comments for your migrations
 
 Tested on:
 
-Ruby 1.8.7 using Rails 3.x
+Ruby 1.8.7 using Rails 3.x.
 Ruby 1.8.6 using Rails 2.3.x.
 
 == Why?
@@ -78,7 +78,7 @@ Or you can combine these commands while modifying a table...
 
 == Requirements
 
-You must be using a DBMS that supports COMMENTing (currently only PostgreSQL and MySQL).
+You must be using a supported DBMS (currently PostgreSQL, MySQL, and SQLite).
 
 If this isn't an option for you, check out the 'schema_comments' gem:
   https://github.com/akm/schema_comments

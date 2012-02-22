@@ -30,4 +30,5 @@ Gem::Specification.new do |s|
   # s.add_development_dependency 'postgres-pr'
   # s.add_development_dependency 'mysql'
   # s.add_development_dependency 'mysql2'
+  # s.add_development_dependency 'sqlite3'
 end

@@ -8,13 +8,13 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       end
     end
 
-    def add_table_comment(table_name, comment)
-      execute "ALTER TABLE #{table_name} COMMENT #{escaped_comment(comment)}"
+    def add_table_comment(table_name, comment_text)
+      execute "ALTER TABLE #{table_name} COMMENT #{escaped_comment(comment_text)}"
     end
 
-    def add_column_comment(table_name, column_name, comment)
+    def add_column_comment(table_name, column_name, comment_text)
       column = column_for(table_name, column_name)
-      change_column table_name, column_name, column.sql_type, :comment => comment
+      change_column table_name, column_name, column.sql_type, :comment => comment_text
     end
 
     def retrieve_table_comment(table_name)
@@ -25,7 +25,8 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     def retrieve_column_comments(table_name, *column_names)
       result = select_rows(column_comment_sql(table_name, *column_names))
       return {} if result.nil?
-      return result.inject({}){|m, row| m[row[0].to_sym] = (row[1].blank? ? nil : row[1]); m}
+      found = result.inject({}){|m, row| m[row[0].to_sym] = (row[1].blank? ? nil : row[1]); m}
+
     end
 
     def create_table_with_migration_comments(table_name, options={}, &block)

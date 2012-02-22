@@ -10,3 +10,9 @@ mysql:
   database: migration_comments_test
   user: root
   password: password
+
+sqlite:
+  adapter: sqlite3
+  database: db/migration_comments_test
+  pool: 5
+  timeout: 5000
