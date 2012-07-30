@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   # however, the comments should work with the original 'annotate_models' plugin as well at:
   #  http://repo.pragprog.com/svn/Public/plugins/annotate_models
   # provided the environment is not loaded until _after_ the AnnotateModels module is declared
-  s.add_development_dependency 'annotate'
+  s.add_development_dependency 'annotate', '~> 2.5.0'
 
   s.add_development_dependency 'pg' # replace with other adapter as needed
   # s.add_development_dependency 'postgres-pr'
