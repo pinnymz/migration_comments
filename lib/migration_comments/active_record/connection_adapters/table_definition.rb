@@ -15,8 +15,10 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
 
     def column_with_migration_comments(name, type, options = {})
       column_without_migration_comments(name, type, options)
-      col = self[name]
-      col.comment = CommentDefinition.new(@base, nil, name, options[:comment])
+      if options.has_key?(:comment)
+        col = self[name]
+        col.comment = CommentDefinition.new(@base, nil, name, options[:comment])
+      end
       self
     end
 
