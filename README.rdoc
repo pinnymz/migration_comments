@@ -4,8 +4,8 @@ Comments for your migrations
 
 Tested on:
 
-Ruby 1.8.7 using Rails 3.x.
-Ruby 1.8.6 using Rails 2.3.x.
+* Ruby 1.8.7/1.9.x using Rails 3.x
+* Ruby 1.8.6/1.8.7 using Rails 2.3.x.
 
 == Why?
 
@@ -77,5 +77,8 @@ Or you can combine these commands while modifying a table...
 
 You must be using a supported DBMS (currently PostgreSQL, MySQL, and SQLite).
 
-If this isn't an option for you, check out the 'schema_comments' gem:
-  https://github.com/akm/schema_comments
+If this isn't an option for you, check out the 'schema_comments' gem at https://github.com/akm/schema_comments
+
+== Licensing
+
+See MIT-LICENSE file for details.
