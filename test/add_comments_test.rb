@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 
 class AddCommentsTest < Test::Unit::TestCase
   include TestHelper
@@ -57,8 +57,8 @@ class AddCommentsTest < Test::Unit::TestCase
     ActiveRecord::Schema.define do
       change_table :sample do |t|
         t.comment table_comment
-        t.change :field1, :string, :comment => column_comment1
-        t.change :field2, :integer
+        t.change :field1, :text, :comment => column_comment1
+        t.change :field2, :string
         t.boolean :field3, :comment => column_comment2
       end
       result_table_comment = retrieve_table_comment :sample
@@ -87,8 +87,8 @@ class AddCommentsTest < Test::Unit::TestCase
       end
       change_table :sample do |t|
         t.comment nil
-        t.change :field1, :string
-        t.change :field2, :integer, :comment => modified_comment
+        t.change :field1, :text
+        t.change :field2, :string, :comment => modified_comment
         t.change :field3, :boolean, :comment => nil
       end
       result_table_comment = retrieve_table_comment :sample

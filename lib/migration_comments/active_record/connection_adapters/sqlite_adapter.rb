@@ -13,8 +13,10 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
     def set_column_comment(table_name, column_name, comment_text)
-      column = column_for(table_name, column_name)
-      change_column table_name, column_name, column.sql_type, :comment => comment_text
+      sql_type = primary_key(table_name) == column_name.to_s ?
+          :primary_key :
+          column_for(table_name, column_name).sql_type
+      change_column table_name, column_name, sql_type, :comment => comment_text
     end
 
     def retrieve_table_comment(table_name)
@@ -49,7 +51,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       create_sql = "CREATE#{' TEMPORARY' if options[:temporary]} TABLE "
       create_sql << "#{quote_table_name(table_name)}#{td.table_comment} ("
       create_sql << td.columns.map do |column|
-        column.to_sql + column.comment.to_sql
+        column.to_sql + column.comment.to_s
       end * ", "
       create_sql << ") #{options[:options]}"
       execute create_sql

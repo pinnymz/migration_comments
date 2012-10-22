@@ -1,4 +1,4 @@
-require 'test_helper'
+require './test_helper'
 
 class SchemaDumperTest < Test::Unit::TestCase
   include TestHelper
