@@ -32,7 +32,7 @@ module MigrationComments::ActiveRecord
         end
         lines << content
       end
-      len = col_names.keys.map{|index| lines[index]}.map(&:length).max + 2
+      len = col_names.keys.map{|index| lines[index]}.map(&:length).max + 2 unless col_names.empty?
       lines.each_with_index do |line, index|
         if table_line == index && table_comment.present?
           block_init = " do |t|"
