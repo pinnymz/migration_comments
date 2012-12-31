@@ -12,6 +12,8 @@ require 'migration_comments/active_record/connection_adapters/mysql2_adapter'
 require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite_adapter'
 
+require 'active_record/connection_adapters/abstract_adapter'
+
 module MigrationComments
   def self.setup
     base_names = %w(SchemaDumper) +
