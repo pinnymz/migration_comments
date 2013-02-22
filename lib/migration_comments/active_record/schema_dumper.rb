@@ -23,9 +23,12 @@ module MigrationComments::ActiveRecord
       lines = []
       table_line = 0
       col_names = {}
+      error = false
       while (line = stream.gets)
         content = line.chomp
-        if content =~ /create_table\s/
+        if content =~ /^# Could not dump table "#{table_name}"/
+          error = true
+        elsif content =~ /create_table\s/
           table_line = lines.size
         elsif content =~ /t\.\w+\s+"(\w+)"/
           col_names[lines.size] = $1.to_sym
@@ -34,7 +37,9 @@ module MigrationComments::ActiveRecord
       end
       len = col_names.keys.map{|index| lines[index]}.map(&:length).max + 2 unless col_names.empty?
       lines.each_with_index do |line, index|
-        if table_line == index && table_comment.present?
+        if error
+          # do nothing
+        elsif table_line == index && table_comment.present?
           block_init = " do |t|"
           line.chomp!(block_init) << ", " << render_comment(table_comment) << block_init
         elsif col_names[index]
