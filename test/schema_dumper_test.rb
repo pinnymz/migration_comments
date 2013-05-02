@@ -14,23 +14,23 @@ class SchemaDumperTest < Test::Unit::TestCase
     dest.rewind
     result = dest.read
     expected = <<EOS
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Schema.define(version: 1) do
 
-  create_table "sample", :force => true, :comment => "a table comment" do |t|
-    t.string  "field1",                                 :comment => "a \"comment\" \\ that ' needs; escaping''"
+  create_table "sample", force: true, :comment => "a table comment" do |t|
+    t.string  "field1",                           :comment => "a \"comment\" \\ that ' needs; escaping''"
     t.integer "field2"
-    t.string  "field3", :default => "", :null => false, :comment => "third column comment"
+    t.string  "field3", default: "", null: false, :comment => "third column comment"
   end
 
 end
 EOS
-
     assert_match /#{Regexp.escape expected}/, result
   end
 
   def test_dump_with_no_columns
     ActiveRecord::Schema.define do
-      remove_column :sample, :field1, :field2
+      remove_column :sample, :field1
+      remove_column :sample, :field2
       set_table_comment :sample, "a table comment"
     end
     dest = StringIO.new
@@ -38,9 +38,9 @@ EOS
     dest.rewind
     result = dest.read
     expected = <<EOS
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Schema.define(version: 1) do
 
-  create_table "sample", :force => true, :comment => "a table comment" do |t|
+  create_table "sample", force: true, :comment => "a table comment" do |t|
   end
 
 end
@@ -65,7 +65,7 @@ EOS
     result = dest.read
 
     expected = <<EOS
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Schema.define(version: 1) do
 
 # Could not dump table "sample" because of following StandardError
 #   Unknown type 'my_custom_type' for column 'field2'

@@ -6,7 +6,9 @@ require 'migration_comments/active_record/connection_adapters/column_definition'
 require 'migration_comments/active_record/connection_adapters/column'
 require 'migration_comments/active_record/connection_adapters/table'
 require 'migration_comments/active_record/connection_adapters/table_definition'
+require 'migration_comments/active_record/connection_adapters/alter_table'
 require 'migration_comments/active_record/connection_adapters/abstract_adapter'
+require 'migration_comments/active_record/connection_adapters/abstract_adapter/schema_creation'
 require 'migration_comments/active_record/connection_adapters/mysql_adapter'
 require 'migration_comments/active_record/connection_adapters/mysql2_adapter'
 require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
@@ -24,6 +26,21 @@ module MigrationComments
       mc_class = "MigrationComments::ActiveRecord::#{base_name}".constantize
       unless ar_class.ancestors.include?(mc_class)
         ar_class.__send__(:include, mc_class)
+      end
+    end
+
+    # Rails 4 introduces some new models that were not previously present
+    optimistic_models = []
+    optimistic_models << "ActiveRecord::ConnectionAdapters::AbstractAdapter::SchemaCreation"
+    optimistic_models << "ActiveRecord::ConnectionAdapters::AlterTable"
+    optimistic_models.each do |model_name|
+      begin
+        model = model_name.constantize
+        mc_class = "MigrationComments::#{model_name}".constantize
+        model.module_eval do
+          model.send(:include, mc_class)
+        end
+      rescue Exception => ex
       end
     end
 

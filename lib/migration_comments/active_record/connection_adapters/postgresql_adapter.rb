@@ -37,6 +37,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       local_table_definition = nil
       create_table_without_migration_comments(table_name, options) do |td|
         local_table_definition = td
+        local_table_definition.base = self
         local_table_definition.comment options[:comment] if options.has_key?(:comment)
         block.call(td)
       end

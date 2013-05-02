@@ -41,6 +41,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       td = table_definition
       td.primary_key(options[:primary_key] || ActiveRecord::Base.get_primary_key(table_name.to_s.singularize)) unless options[:id] == false
       td.comment options[:comment] if options.has_key?(:comment)
+      td.base = self
 
       yield td if block_given?
 
