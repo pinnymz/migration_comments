@@ -1,4 +1,4 @@
-require './test_helper'
+require File.join(File.dirname(__FILE__), 'test_helper')
 gem 'annotate'
 require 'annotate/annotate_models'
 

@@ -5,7 +5,7 @@ gem 'rails', '>= 2.3.2'
 require 'active_record'
 require 'yaml'
 
-CONFIGURATIONS = YAML::load(IO.read('config/database.yml'))
+CONFIGURATIONS = YAML::load(IO.read(File.join(File.dirname(__FILE__), 'config/database.yml')))
 
 ENV['DB'] ||= 'postgres' # override as needed
 
