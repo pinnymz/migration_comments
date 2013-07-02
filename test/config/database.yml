@@ -13,6 +13,6 @@ mysql:
 
 sqlite:
   adapter: sqlite3
-  database: db/migration_comments_test
+  database: test/db/migration_comments_test
   pool: 5
   timeout: 5000
