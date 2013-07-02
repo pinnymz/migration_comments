@@ -2,7 +2,6 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
   module MysqlAdapter
     def self.included(base)
       base.class_eval do
-        attr_accessor :database_name
         alias_method_chain :create_table, :migration_comments
         alias_method_chain :change_column, :migration_comments
       end
@@ -77,7 +76,6 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
     def table_comment_sql(table_name)
-      ensure_database_name
       <<SQL
 SELECT table_comment FROM INFORMATION_SCHEMA.TABLES
   WHERE table_schema = '#{database_name}'
@@ -86,7 +84,6 @@ SQL
     end
 
     def column_comment_sql(table_name, *column_names)
-      ensure_database_name
       col_matcher_sql = column_names.empty? ? "" : " AND column_name IN (#{column_names.map{|c_name| "'#{c_name}'"}.join(',')})"
       <<SQL
 SELECT column_name, column_comment FROM INFORMATION_SCHEMA.COLUMNS
@@ -95,10 +92,8 @@ SELECT column_name, column_comment FROM INFORMATION_SCHEMA.COLUMNS
 SQL
     end
 
-    def ensure_database_name
-      return if database_name
-      info = YAML::load(IO.read('config/database.yml'))
-      @database_name = info[ENV['DB'] || Rails.env.to_s]["database"]
+    def database_name
+      @database_name ||= select_rows("SELECT DATABASE()")[0][0]
     end
 
   end
