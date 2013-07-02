@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_runtime_dependency 'rails', '>= 2.3.2'
+  s.add_runtime_dependency 'activerecord', '>= 2.3.2'
 
   # for development, we are testing against the 'annotate' gem
   # however, the comments should work with the original 'annotate_models' plugin as well at:

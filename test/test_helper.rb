@@ -1,7 +1,7 @@
 require 'test/unit'
 
 require 'rubygems'
-gem 'rails', '>= 2.3.2'
+gem 'activerecord', '>= 2.3.2'
 require 'active_record'
 require 'yaml'
 
