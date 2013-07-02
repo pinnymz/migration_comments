@@ -2,6 +2,7 @@ require File.join(File.dirname(__FILE__), 'test_helper')
 
 class SchemaDumperTest < Test::Unit::TestCase
   include TestHelper
+  include MigrationComments::SchemaFormatter
 
   def test_dump
     ActiveRecord::Schema.define do
@@ -14,17 +15,17 @@ class SchemaDumperTest < Test::Unit::TestCase
     dest.rewind
     result = dest.read
     expected = <<EOS
-ActiveRecord::Schema.define(version: 1) do
+ActiveRecord::Schema.define(#{render_kv_pair(:version, 1)}) do
 
-  create_table "sample", force: true, :comment => "a table comment" do |t|
-    t.string  "field1",                           :comment => "a \"comment\" \\ that ' needs; escaping''"
+  create_table "sample", #{render_kv_pair(:force, true)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    t.string  "field1", __SPACES__#{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
     t.integer "field2"
-    t.string  "field3", default: "", null: false, :comment => "third column comment"
+    t.string  "field3", #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
   end
 
 end
 EOS
-    assert_match /#{Regexp.escape expected}/, result
+    assert_match /#{Regexp.escape(expected).gsub(/__SPACES__/, " +")}/, result
   end
 
   def test_dump_with_no_columns
@@ -38,9 +39,9 @@ EOS
     dest.rewind
     result = dest.read
     expected = <<EOS
-ActiveRecord::Schema.define(version: 1) do
+ActiveRecord::Schema.define(#{render_kv_pair(:version, 1)}) do
 
-  create_table "sample", force: true, :comment => "a table comment" do |t|
+  create_table "sample", #{render_kv_pair(:force, true)}, #{render_kv_pair(:comment, "a table comment")} do |t|
   end
 
 end
@@ -65,7 +66,7 @@ EOS
     result = dest.read
 
     expected = <<EOS
-ActiveRecord::Schema.define(version: 1) do
+ActiveRecord::Schema.define(#{render_kv_pair(:version, 1)}) do
 
 # Could not dump table "sample" because of following StandardError
 #   Unknown type 'my_custom_type' for column 'field2'

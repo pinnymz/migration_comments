@@ -1,5 +1,6 @@
 module MigrationComments::ActiveRecord
   module SchemaDumper
+    include MigrationComments::SchemaFormatter
     def self.included(base)
       base.class_eval do
         alias_method_chain :table, :migration_comments
@@ -50,10 +51,6 @@ module MigrationComments::ActiveRecord
       end
       comment_stream.rewind
       comment_stream
-    end
-
-    def render_comment(comment)
-      ":comment => \"#{comment}\""
     end
   end
 end
