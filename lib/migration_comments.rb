@@ -21,6 +21,10 @@ require 'active_record/connection_adapters/abstract_adapter'
 
 module MigrationComments
   def self.setup
+    if ::ActiveRecord::VERSION::MAJOR == 2
+      warn "[DEPRECATION] MigrationComments support for ActiveRecord v2.3 is deprecated and will be removed in a future version."
+    end
+
     base_names = %w(SchemaDumper) +
       %w(ColumnDefinition Column Table TableDefinition AbstractAdapter).map{|name| "ConnectionAdapters::#{name}"}
 
