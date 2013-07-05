@@ -26,9 +26,10 @@ Gem::Specification.new do |s|
   # provided the environment is not loaded until _after_ the AnnotateModels module is declared
   s.add_development_dependency 'annotate', '~> 2.5.0'
 
-  s.add_development_dependency 'pg' # replace with other adapter as needed
+  # add / replace with other adapter(s) as needed
+  s.add_development_dependency 'pg'
   # s.add_development_dependency 'postgres-pr'
   # s.add_development_dependency 'mysql'
-  # s.add_development_dependency 'mysql2'
-  # s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'mysql2'
+  s.add_development_dependency 'sqlite3'
 end

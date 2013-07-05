@@ -14,6 +14,7 @@ require 'migration_comments/active_record/connection_adapters/mysql_adapter'
 require 'migration_comments/active_record/connection_adapters/mysql2_adapter'
 require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite_adapter'
+require 'migration_comments/active_record/connection_adapters/sqlite3_adapter'
 
 require 'active_record/connection_adapters/abstract_adapter'
 
@@ -45,10 +46,12 @@ module MigrationComments
       end
     end
 
-    %w(PostgreSQL Mysql Mysql2 SQLite).each do |adapter|
+    adapters = %w(PostgreSQL Mysql Mysql2)
+    adapters << (::ActiveRecord::VERSION::MAJOR <= 3 ? "SQLite" : "SQLite3")
+    adapters.each do |adapter|
       begin
         require("active_record/connection_adapters/#{adapter.downcase}_adapter")
-        adapter_class = ('ActiveRecord::ConnectionAdapters::' << "#{adapter}Adapter").constantize
+        adapter_class = ('::ActiveRecord::ConnectionAdapters::' << "#{adapter}Adapter").constantize
         mc_class = ('MigrationComments::ActiveRecord::ConnectionAdapters::' << "#{adapter}Adapter").constantize
         adapter_class.module_eval do
           adapter_class.__send__(:include, mc_class)

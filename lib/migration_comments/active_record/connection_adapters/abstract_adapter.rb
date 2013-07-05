@@ -19,6 +19,10 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       false
     end
 
+    def inline_comments?
+      false
+    end
+
     # Remove a comment on a table (if set)
     def remove_table_comment(table_name)
       set_table_comment(table_name, nil)

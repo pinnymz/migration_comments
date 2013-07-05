@@ -7,6 +7,10 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       end
     end
 
+    def comments_supported?
+      true
+    end
+
     def set_table_comment(table_name, comment_text)
       execute "ALTER TABLE #{quote_table_name table_name} COMMENT #{escaped_comment(comment_text)}"
     end
@@ -30,8 +34,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     def retrieve_column_comments(table_name, *column_names)
       result = select_rows(column_comment_sql(table_name, *column_names))
       return {} if result.nil?
-      found = result.inject({}){|m, row| m[row[0].to_sym] = (row[1].blank? ? nil : row[1]); m}
-
+      result.inject({}){|m, row| m[row[0].to_sym] = (row[1].blank? ? nil : row[1]); m}
     end
 
     def create_table_with_migration_comments(table_name, options={}, &block)

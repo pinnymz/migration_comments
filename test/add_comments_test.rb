@@ -40,7 +40,7 @@ class AddCommentsTest < Test::Unit::TestCase
         result_table_comment = retrieve_table_comment :sample2
         result_column_comments = retrieve_column_comments :sample2
       ensure
-        drop_table :sample2
+        drop_table :sample2 rescue nil
       end
     end
     assert_equal table_comment, result_table_comment
