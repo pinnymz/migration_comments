@@ -4,8 +4,9 @@ Comments for your migrations
 
 Tested on:
 
-* Ruby 1.8.7/1.9.x using Rails 3.x
-* Ruby 1.8.6/1.8.7 using Rails 2.3.x.
+Rails 4.x:: using Ruby 1.9.3 / 2.0
+Rails 3.x:: using Ruby 1.8.7 / 1.9.x / 2.0
+Rails 2.3.x (deprecated):: using 1.8.6 / 1.8.7
 
 == Why?
 
