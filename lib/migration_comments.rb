@@ -13,6 +13,7 @@ require 'migration_comments/active_record/connection_adapters/abstract_adapter/s
 require 'migration_comments/active_record/connection_adapters/mysql_adapter'
 require 'migration_comments/active_record/connection_adapters/mysql2_adapter'
 require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
+require 'migration_comments/active_record/connection_adapters/abstract_sqlite_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite3_adapter'
 
