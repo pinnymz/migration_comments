@@ -43,7 +43,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
         local_table_definition = td
         local_table_definition.base = self
         local_table_definition.comment options[:comment] if options.has_key?(:comment)
-        block.call(td)
+        block.call(td) if block
       end
       comments = local_table_definition.collect_comments(table_name)
       comments.each do |comment_definition|
