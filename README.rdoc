@@ -4,9 +4,9 @@ Comments for your migrations
 
 Tested on:
 
-Rails 4.x:: using Ruby 1.9.3 / 2.0
-Rails 3.x:: using Ruby 1.8.7 / 1.9.x / 2.0
-Rails 2.3.x (deprecated):: using 1.8.6 / 1.8.7
+ActiveRecord 4.x:: using Ruby 1.9.3 / 2.0
+ActiveRecord 3.x:: using Ruby 1.8.7 / 1.9.x / 2.0
+ActiveRecord 2.3.x (deprecated):: using Ruby 1.8.6 / 1.8.7
 
 == Why?
 
@@ -22,11 +22,11 @@ Using MigrationComments, you can simply add comments during your migrations.  Or
 have existing data structures, just add the comments afterwards in a separate migration.  And of
 course you can always modify and delete these comments in later migrations.
 
-So where are these comments used?  Firstly, they will be included in your schema.rb dump which
-is where your IDE (e.g. RubyMine) should be learning about your model structure.  This means that
-they'll be available at any point in your project.  Additionally, if you are using the 'annotate'
-gem, these comments will be added to the annotations that are generated within your model.rb
-file.
+So where are these comments used?  Firstly, they will be included in your <tt>schema.rb</tt> dump which
+is where your IDE (e.g. RubyMine, TextMate) should be learning about your model structure.  This means that
+they'll be available at any point in your project.  Additionally, if you are using the
+'annotate'[https://github.com/ctran/annotate_models] gem, these comments will be added to the annotations
+that are generated within your <tt>_model_.rb</tt> file.
 
 == Examples
 
@@ -37,7 +37,7 @@ To add a comment to an existing structure...
     set_column_comment :table_name, :column_name, "A column comment"
   end
 
-Or you can use the change_table macro...
+Or you can use the <tt>change_table</tt> macro...
 
   def self.up
     change_table :table_name do |t|
