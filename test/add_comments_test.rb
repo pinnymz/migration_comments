@@ -26,6 +26,12 @@ class AddCommentsTest < Test::Unit::TestCase
     assert_nil result_field2
   end
 
+  def test_creating_a_table_with_table_comments_and_no_block
+    ActiveRecord::Schema.define do
+      create_table :sample3, :temporary => true, :comment => "a table comment"
+    end
+  end
+
   def test_creating_a_table_with_table_and_column_comments
     table_comment = "a table comment"
     column_comment = "a column comment"

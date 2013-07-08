@@ -37,13 +37,13 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       result.inject({}){|m, row| m[row[0].to_sym] = (row[1].blank? ? nil : row[1]); m}
     end
 
-    def create_table_with_migration_comments(table_name, options={}, &block)
+    def create_table_with_migration_comments(table_name, options={})
       local_table_definition = nil
       create_table_without_migration_comments(table_name, options) do |td|
         local_table_definition = td
         local_table_definition.base = self
         local_table_definition.comment options[:comment] if options.has_key?(:comment)
-        block.call(td)
+        yield td if block_given?
       end
       comments = local_table_definition.collect_comments(table_name)
       comments.each do |comment_definition|
