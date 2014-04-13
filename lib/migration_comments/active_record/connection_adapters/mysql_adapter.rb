@@ -61,8 +61,12 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     def add_column_options!(sql, options)
       super(sql, options)
       if options.keys.include?(:comment)
-        sql << " COMMENT #{escaped_comment(options[:comment])}"
+        sql << CommentDefinition.new(self, nil, nil, options[:comment]).to_sql
       end
+    end
+
+    def comment_sql(comment_definition)
+      " COMMENT #{escaped_comment(comment_definition.comment_text)}"
     end
 
     def execute_comment(comment_definition)

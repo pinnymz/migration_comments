@@ -19,7 +19,13 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       false
     end
 
+    # SQLite style - embedded comments
     def inline_comments?
+      false
+    end
+
+    # PostgreSQL style - comment specific commands
+    def independent_comments?
       false
     end
 
