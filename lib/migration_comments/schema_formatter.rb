@@ -13,7 +13,7 @@ module MigrationComments
     end
 
     def render_value(value)
-      value.is_a?(String) ? "\"#{value}\"" : value
+      value.is_a?(String) ? %Q[#{value}].inspect : value
     end
   end
 end
