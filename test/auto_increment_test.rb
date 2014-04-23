@@ -4,7 +4,7 @@ class Sample < ActiveRecord::Base
   self.table_name = 'sample'
 end
 
-class AutoIncrementTest < Test::Unit::TestCase
+class AutoIncrementTest < Minitest::Unit::TestCase
   include TestHelper
 
   def test_basic_table_creation
@@ -35,13 +35,11 @@ class AutoIncrementTest < Test::Unit::TestCase
     end
 
     ids = []
-    assert_nothing_raised ActiveRecord::StatementInvalid do
-      ActiveRecord::Base.connection.instance_eval do
-        3.times do |n|
-          execute "INSERT INTO #{quote_table_name :sample} (#{quote_column_name :field1}, #{quote_column_name :field2}) VALUES ('text#{n}', #{n})"
-        end
-        ids = select_rows("SELECT #{quote_column_name :id} FROM #{quote_table_name :sample}").map{|r| r.first.to_i }.sort
+    ActiveRecord::Base.connection.instance_eval do
+      3.times do |n|
+        execute "INSERT INTO #{quote_table_name :sample} (#{quote_column_name :field1}, #{quote_column_name :field2}) VALUES ('text#{n}', #{n})"
       end
+      ids = select_rows("SELECT #{quote_column_name :id} FROM #{quote_table_name :sample}").map{|r| r.first.to_i }.sort
     end
     assert_equal [1,2,3], ids
 

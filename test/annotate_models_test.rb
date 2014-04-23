@@ -6,7 +6,7 @@ class Sample < ActiveRecord::Base
   self.table_name = 'sample'
 end
 
-class AnnotateModelsTest < Test::Unit::TestCase
+class AnnotateModelsTest < Minitest::Unit::TestCase
   include TestHelper
 
   TEST_PREFIX = "== Schema Information"

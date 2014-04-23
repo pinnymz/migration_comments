@@ -3,6 +3,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter
     def self.included(base)
       base.class_eval do
         alias_method_chain :column_options, :migration_comments
+        alias_method_chain :add_column_options!, :migration_comments
         alias_method_chain :visit_TableDefinition, :migration_comments
         alias_method_chain :visit_ColumnDefinition, :migration_comments
       end
@@ -12,6 +13,14 @@ module MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter
       column_options = o.primary_key? ? {} : column_options_without_migration_comments(o)
       column_options[:comment] = o.comment.comment_text if o.comment
       column_options
+    end
+
+    def add_column_options_with_migration_comments!(sql, options)
+      sql = add_column_options_without_migration_comments!(sql, options)
+      if options.keys.include?(:comment) && !@conn.independent_comments?
+        sql <<  MigrationComments::ActiveRecord::ConnectionAdapters::CommentDefinition.new(@conn, nil, nil, options[:comment]).to_sql
+      end
+      sql
     end
 
     def visit_TableDefinition_with_migration_comments(o)

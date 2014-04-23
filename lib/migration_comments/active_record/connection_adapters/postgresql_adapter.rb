@@ -12,6 +12,10 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       true
     end
 
+    def independent_comments?
+      true
+    end
+
     # Set a comment on a table
     def set_table_comment(table_name, comment_text)
       execute CommentDefinition.new(self, table_name, nil, comment_text).to_sql
