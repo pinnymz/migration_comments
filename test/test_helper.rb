@@ -30,3 +30,11 @@ module TestHelper
     end
   end
 end
+
+class Sample < ActiveRecord::Base
+  self.table_name = 'sample'
+end
+
+class Sample2 < ActiveRecord::Base
+  self.table_name = 'sample2'
+end
