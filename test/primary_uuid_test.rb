@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class PrimaryUuidTest < Minitest::Unit::TestCase
+class PrimaryUuidTest < Minitest::Test
   include TestHelper
 
   def setup

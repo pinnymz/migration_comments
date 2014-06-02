@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class SchemaDumperTest < Minitest::Unit::TestCase
+class SchemaDumperTest < Minitest::Test
   include TestHelper
   include MigrationComments::SchemaFormatter
 

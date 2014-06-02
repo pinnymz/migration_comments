@@ -4,7 +4,7 @@ class Sample < ActiveRecord::Base
   self.table_name = 'sample'
 end
 
-class AutoIncrementTest < Minitest::Unit::TestCase
+class AutoIncrementTest < Minitest::Test
   include TestHelper
 
   def test_basic_table_creation
