@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string/inflections'
+require 'active_record'
 require "migration_comments/version"
 require "migration_comments/schema_formatter"
 
@@ -17,8 +19,6 @@ require 'migration_comments/active_record/connection_adapters/abstract_sqlite_ad
 require 'migration_comments/active_record/connection_adapters/sqlite_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite3_adapter'
 
-require 'active_record/connection_adapters/abstract_adapter'
-
 module MigrationComments
   def self.setup
     if ::ActiveRecord::VERSION::MAJOR == 2
@@ -26,7 +26,7 @@ module MigrationComments
     end
 
     base_names = %w(SchemaDumper) +
-      %w(ColumnDefinition Column Table TableDefinition AbstractAdapter).map{|name| "ConnectionAdapters::#{name}"}
+        %w(ColumnDefinition Column Table TableDefinition AbstractAdapter).map { |name| "ConnectionAdapters::#{name}" }
 
     base_names.each do |base_name|
       ar_class = "ActiveRecord::#{base_name}".constantize
@@ -66,21 +66,13 @@ module MigrationComments
     end
 
     # annotations are not required for this gem, but if they exist they should be updated
-    begin
-      begin # first try to load from the 'annotate' gem
-        require 'annotate/annotate_models'
-      rescue Exception => ex
-        # continue as it may be already accessible through a plugin
-      end
-      gem_class = AnnotateModels
-      # don't require this until after the original AnnotateModels loads to avoid namespace confusion
+    if defined?(::AnnotateModels)
       require 'migration_comments/annotate_models'
+      gem_class = ::AnnotateModels
       mc_class = MigrationComments::AnnotateModels
       unless gem_class.ancestors.include?(mc_class)
         gem_class.__send__(:include, mc_class)
       end
-    rescue Exception => ex
-      # if we got here, don't bother installing comments into annotations
     end
   end
 end

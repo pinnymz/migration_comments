@@ -1,18 +1,15 @@
-require 'minitest/autorun'
-
-require 'rubygems'
-gem 'activerecord', '>= 2.3.2'
-require 'active_record'
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'active_support/testing/autorun'
 require 'yaml'
+require 'migration_comments'
 
-CONFIGURATIONS = YAML::load(IO.read(File.join(File.dirname(__FILE__), 'config/database.yml')))
-
+databases = YAML::load_file("#{File.dirname(__FILE__)}/config/database.yml")
 ENV['DB'] ||= 'postgres' # override as needed
 
-ActiveRecord::Base.establish_connection(CONFIGURATIONS[ENV['DB']])
+ActiveRecord::Base.establish_connection(databases[ENV['DB']])
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
-require 'migration_comments'
+
+
 
 module TestHelper
   def setup

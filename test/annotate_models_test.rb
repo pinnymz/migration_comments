@@ -1,8 +1,7 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
-gem 'annotate'
 require 'annotate/annotate_models'
+require File.join(File.dirname(__FILE__), 'test_helper')
 
-class AnnotateModelsTest < Minitest::Unit::TestCase
+class AnnotateModelsTest < Minitest::Test
   include TestHelper
 
   TEST_PREFIX = "== Schema Information"
