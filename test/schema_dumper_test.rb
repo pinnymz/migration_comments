@@ -43,7 +43,7 @@ EOS
   end
 
   def test_schema_dump_with_custom_type_error_for_pg
-    return unless ENV['DB'] == 'postgres'
+    skip unless ENV['DB'] == 'postgres'
     ActiveRecord::Base.connection.execute "DROP TYPE IF EXISTS my_custom_type; CREATE TYPE my_custom_type AS ENUM('thing1', 'thing2');"
     ActiveRecord::Base.connection.execute "ALTER TABLE sample ALTER COLUMN field2 TYPE my_custom_type USING 'thing1';"
 

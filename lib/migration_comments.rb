@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string/inflections'
+require 'active_record'
 require "migration_comments/version"
 require "migration_comments/schema_formatter"
 
@@ -16,8 +18,6 @@ require 'migration_comments/active_record/connection_adapters/postgresql_adapter
 require 'migration_comments/active_record/connection_adapters/abstract_sqlite_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite3_adapter'
-
-require 'active_record/connection_adapters/abstract_adapter'
 
 module MigrationComments
   def self.setup
