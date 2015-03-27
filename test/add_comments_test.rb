@@ -26,6 +26,29 @@ class AddCommentsTest < Minitest::Unit::TestCase
     assert_nil result_field2
   end
 
+  def test_adding_a_column_with_a_comment
+    comment_text = "a comment in a new column"
+    result_field1 = nil
+    result_field3 = nil
+    ActiveRecord::Schema.define do
+      add_column :sample, :field3, :string, :comment => comment_text
+      result_field3 = retrieve_column_comment :sample, :field3
+      result_field1 = retrieve_column_comment :sample, :field1
+    end
+    assert_equal comment_text, result_field3
+    assert_nil result_field1
+  end
+
+  def test_changing_a_column_while_adding_a_comment
+    comment_text = "a comment in a changing column"
+    result_field1 = nil
+    ActiveRecord::Schema.define do
+      change_column :sample, :field1, :string, :limit => 25, :comment => comment_text
+      result_field1 = retrieve_column_comment :sample, :field1
+    end
+    assert_equal comment_text, result_field1
+  end
+
   def test_creating_a_table_with_table_comments_and_no_block
     ActiveRecord::Schema.define do
       create_table :sample3, :temporary => true, :comment => "a table comment"
