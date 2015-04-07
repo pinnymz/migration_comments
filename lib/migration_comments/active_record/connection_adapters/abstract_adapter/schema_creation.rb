@@ -10,7 +10,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter
     end
 
     def column_options_with_migration_comments(o)
-      column_options = o.primary_key? ? {} : column_options_without_migration_comments(o)
+      column_options = column_options_without_migration_comments(o)
       column_options[:comment] = o.comment.comment_text if o.comment
       column_options
     end
