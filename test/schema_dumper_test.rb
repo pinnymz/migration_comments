@@ -14,13 +14,23 @@ class SchemaDumperTest < Test::Unit::TestCase
     ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, dest)
     dest.rewind
     result = dest.read
-    expected = <<EOS
+    if ENV['DB'] == 'mysql'
+      expected = <<EOS
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    t.string  "field1", limit: 255, __SPACES__#{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
+    t.integer "field2", limit: 4
+    t.string  "field3", limit: 255, #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
+  end
+EOS
+    else
+      expected = <<EOS
   create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
     t.string  "field1", __SPACES__#{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
     t.integer "field2"
     t.string  "field3", #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
   end
 EOS
+    end
     assert_match /#{Regexp.escape(expected).gsub(/__SPACES__/, " +")}/, result
   end
 

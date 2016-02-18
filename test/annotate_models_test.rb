@@ -21,7 +21,22 @@ class AnnotateModelsTest < Test::Unit::TestCase
 
 
     result = AnnotateModels.get_schema_info(Sample, TEST_PREFIX)
-    expected = <<EOS
+
+    if ENV['DB'] == 'mysql'
+      expected = <<EOS
+# #{TEST_PREFIX}
+#
+# Table name: sample # a table comment
+#
+#  id     :integer          not null, primary key
+#  field1 :string(255)                            # a "comment" \\ that ' needs; escaping''
+#  field2 :integer
+#  field3 :string(255)      default(""), not null # third column comment
+#
+
+EOS
+    else
+      expected = <<EOS
 # #{TEST_PREFIX}
 #
 # Table name: sample # a table comment
@@ -33,6 +48,7 @@ class AnnotateModelsTest < Test::Unit::TestCase
 #
 
 EOS
+    end
     assert_equal expected, result
   end
 end

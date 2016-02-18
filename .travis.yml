@@ -20,3 +20,8 @@ before_script:
 script:
   - bundle install
   - bundle exec rake test
+env:
+  matrix:
+    - DB=postgres
+    - DB=mysql
+    - DB=sqlite
