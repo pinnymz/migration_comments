@@ -6,7 +6,7 @@ class Sample < ActiveRecord::Base
   self.table_name = 'sample'
 end
 
-class AnnotateModelsTest < Minitest::Unit::TestCase
+class AnnotateModelsTest < Test::Unit::TestCase
   include TestHelper
 
   TEST_PREFIX = "== Schema Information"
@@ -18,6 +18,8 @@ class AnnotateModelsTest < Minitest::Unit::TestCase
       add_column :sample, :field3, :string, :null => false, :default => '', :comment => "third column comment"
     end
 
+
+
     result = AnnotateModels.get_schema_info(Sample, TEST_PREFIX)
     expected = <<EOS
 # #{TEST_PREFIX}
@@ -25,9 +27,9 @@ class AnnotateModelsTest < Minitest::Unit::TestCase
 # Table name: sample # a table comment
 #
 #  id     :integer          not null, primary key
-#  field1 :string(255)                            # a "comment" \\ that ' needs; escaping''
+#  field1 :string                                 # a "comment" \\ that ' needs; escaping''
 #  field2 :integer
-#  field3 :string(255)      default(""), not null # third column comment
+#  field3 :string           default(""), not null # third column comment
 #
 
 EOS
