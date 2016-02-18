@@ -8,7 +8,8 @@ postgres:
 mysql:
   adapter: mysql2
   database: migration_comments_test
-  user: root
+  host: 127.0.0.1
+  username: root
   password: password
 
 sqlite:

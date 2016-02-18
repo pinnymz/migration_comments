@@ -1,4 +1,4 @@
-require 'minitest/autorun'
+require 'test/unit'
 
 require 'rubygems'
 gem 'activerecord', '>= 2.3.2'

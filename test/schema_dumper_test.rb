@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class SchemaDumperTest < Minitest::Unit::TestCase
+class SchemaDumperTest < Test::Unit::TestCase
   include TestHelper
   include MigrationComments::SchemaFormatter
 
@@ -14,13 +14,23 @@ class SchemaDumperTest < Minitest::Unit::TestCase
     ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, dest)
     dest.rewind
     result = dest.read
-    expected = <<EOS
-  create_table "sample", #{render_kv_pair(:force, true)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    if ENV['DB'] == 'mysql'
+      expected = <<EOS
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    t.string  "field1", limit: 255, __SPACES__#{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
+    t.integer "field2", limit: 4
+    t.string  "field3", limit: 255, #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
+  end
+EOS
+    else
+      expected = <<EOS
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
     t.string  "field1", __SPACES__#{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
     t.integer "field2"
     t.string  "field3", #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
   end
 EOS
+    end
     assert_match /#{Regexp.escape(expected).gsub(/__SPACES__/, " +")}/, result
   end
 
@@ -35,7 +45,7 @@ EOS
     dest.rewind
     result = dest.read
     expected = <<EOS
-  create_table "sample", #{render_kv_pair(:force, true)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
   end
 EOS
 
