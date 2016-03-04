@@ -78,6 +78,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
     private
+
     def escaped_comment(comment)
       comment.nil? ? "''" : "'#{comment.gsub("'", "''").gsub("\\", "\\\\\\\\")}'"
     end
@@ -103,5 +104,13 @@ SQL
       @database_name ||= select_rows("SELECT DATABASE()")[0][0]
     end
 
+    # Returns a table's primary key and belonging sequence.
+    # This method removed from Rails 5:
+    # https://github.com/rails/rails/commit/fd37486e072fc946da6405eb92a1664b5a735615
+    def pk_and_sequence_for(table)
+      if pk = primary_key(table)
+        [ pk, nil ]
+      end
+    end
   end
 end

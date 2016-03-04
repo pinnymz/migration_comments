@@ -3,6 +3,7 @@ require "migration_comments/schema_formatter"
 
 require 'migration_comments/active_record/schema_dumper'
 require 'migration_comments/active_record/connection_adapters/comment_definition'
+require 'migration_comments/active_record/connection_adapters/add_column_definition'
 require 'migration_comments/active_record/connection_adapters/column_definition'
 require 'migration_comments/active_record/connection_adapters/column'
 require 'migration_comments/active_record/connection_adapters/table'
@@ -27,6 +28,11 @@ module MigrationComments
 
     base_names = %w(SchemaDumper) +
       %w(ColumnDefinition Column Table TableDefinition AbstractAdapter).map{|name| "ConnectionAdapters::#{name}"}
+
+    # Rails 5 compatibility
+    if ::ActiveRecord::VERSION::MAJOR >= 5
+      base_names.insert(2, 'ConnectionAdapters::AddColumnDefinition')
+    end
 
     base_names.each do |base_name|
       ar_class = "ActiveRecord::#{base_name}".constantize
