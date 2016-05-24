@@ -1,15 +1,10 @@
 module MigrationComments::ActiveRecord
   module SchemaDumper
     include MigrationComments::SchemaFormatter
-    def self.included(base)
-      base.class_eval do
-        alias_method_chain :table, :migration_comments
-      end
-    end
 
-    def table_with_migration_comments(table, stream)
+    def table(table, stream)
       tbl_stream = StringIO.new
-      table_without_migration_comments(table, tbl_stream)
+      super(table, tbl_stream)
       tbl_stream.rewind
       commented_stream = append_comments(table, tbl_stream)
       tbl_stream.close
@@ -25,8 +20,8 @@ module MigrationComments::ActiveRecord
       table_line = 0
       col_names = {}
       error = false
-      while (line = stream.gets)
-        content = line.chomp
+      while (stream_line = stream.gets)
+        content = stream_line.chomp
         if content =~ /^# Could not dump table "#{table_name}"/
           error = true
         elsif content =~ /create_table\s/

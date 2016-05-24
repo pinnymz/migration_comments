@@ -1,0 +1,27 @@
+sudo: required
+language: ruby
+rvm:
+  - 2.1.8
+  - 2.2.4
+  - 2.3.0
+gemfile:
+  - Gemfile
+  - gemfiles/rails4.gemfile
+  - gemfiles/rails5.gemfile
+services:
+  - mysql
+  - postgresql
+before_install:
+  - gem install bundler
+before_script:
+  - mysql -u root -e "create database migration_comments_test;"
+  - psql -U postgres -c "ALTER USER "postgres" WITH PASSWORD 'password';"
+  - PGPASSWORD=password psql -U postgres -c "create database migration_comments_test;"
+env:
+  - DB=postgres
+  - DB=mysql
+  - DB=sqlite
+matrix:
+  exclude:
+    - rvm: 2.1.8
+      gemfile: gemfiles/rails5.gemfile

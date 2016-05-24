@@ -6,15 +6,6 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     def set_column_comment(table_name, column_name, comment_text)
     end
 
-    def add_table_comment(*args)
-      puts "'add_table_comment' is deprecated, and will be removed in future releases. Use 'set_table_comment' instead."
-      set_table_comment(*args)
-    end
-    def add_column_comment(*args)
-      puts "'add_column_comment' is deprecated, and will be removed in future releases. Use 'set_column_comment' instead."
-      set_column_comment(*args)
-    end
-
     def comments_supported?
       false
     end
@@ -24,7 +15,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       false
     end
 
-    # PostgreSQL style - comment specific commands
+    # PostgreSQL style - comment-specific commands
     def independent_comments?
       false
     end

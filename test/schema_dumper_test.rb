@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class SchemaDumperTest < Minitest::Unit::TestCase
+class SchemaDumperTest < Minitest::Test
   include TestHelper
   include MigrationComments::SchemaFormatter
 
@@ -14,14 +14,24 @@ class SchemaDumperTest < Minitest::Unit::TestCase
     ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, dest)
     dest.rewind
     result = dest.read
-    expected = <<EOS
-  create_table "sample", #{render_kv_pair(:force, true)}, #{render_kv_pair(:comment, "a table comment")} do |t|
-    t.string  "field1", __SPACES__#{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
+    expected = if ENV['DB'] == 'mysql'
+      <<-EOS
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    t.string  "field1", #{render_kv_pair(:limit, 255)},                           #{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
+    t.integer "field2", #{render_kv_pair(:limit, 4)}
+    t.string  "field3", #{render_kv_pair(:limit, 255)}, #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
+  end
+      EOS
+    else
+      <<-EOS
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    t.string  "field1",                           #{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
     t.integer "field2"
     t.string  "field3", #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
   end
-EOS
-    assert_match /#{Regexp.escape(expected).gsub(/__SPACES__/, " +")}/, result
+      EOS
+    end
+    assert_match(/#{Regexp.escape(expected).gsub(/__SPACES__/, " +")}/, result)
   end
 
   def test_dump_with_no_columns
@@ -35,11 +45,11 @@ EOS
     dest.rewind
     result = dest.read
     expected = <<EOS
-  create_table "sample", #{render_kv_pair(:force, true)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
   end
 EOS
 
-    assert_match /#{Regexp.escape expected}/, result
+    assert_match(/#{Regexp.escape expected}/, result)
   end
 
   def test_schema_dump_with_custom_type_error_for_pg
@@ -62,6 +72,6 @@ EOS
 #   Unknown type 'my_custom_type' for column 'field2'
 EOS
 
-    assert_match /#{Regexp.escape expected}/, result
+    assert_match(/#{Regexp.escape expected}/, result)
   end
 end

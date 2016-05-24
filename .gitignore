@@ -4,3 +4,4 @@ Gemfile.lock
 pkg/*
 .idea/*
 test/db/migration_comments_test
+.byebug_history

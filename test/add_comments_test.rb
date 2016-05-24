@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
-class AddCommentsTest < Minitest::Unit::TestCase
+class AddCommentsTest < Minitest::Test
   include TestHelper
 
   def test_adding_a_table_comment
@@ -49,10 +49,28 @@ class AddCommentsTest < Minitest::Unit::TestCase
     assert_equal comment_text, result_field1
   end
 
-  def test_creating_a_table_with_table_comments_and_no_block
+  def test_creating_a_temp_table_with_table_comments_and_no_block
     ActiveRecord::Schema.define do
-      create_table :sample3, :temporary => true, :comment => "a table comment"
+      begin
+        create_table :sample3, temporary: true, comment: "a table comment"
+      ensure
+        drop_table :sample3 rescue nil
+      end
     end
+  end
+
+  def test_creating_a_table_with_table_comments_and_no_block
+    table_comment = "a table comment"
+    result_table_comment = nil
+    ActiveRecord::Schema.define do
+      begin
+        create_table :sample3, comment: table_comment
+        result_table_comment = retrieve_table_comment :sample3
+      ensure
+        drop_table :sample3 rescue nil
+      end
+    end
+    assert_equal table_comment, result_table_comment
   end
 
   def test_creating_a_table_with_table_and_column_comments

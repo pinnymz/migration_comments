@@ -4,9 +4,9 @@ Comments for your migrations
 
 Tested on:
 
-ActiveRecord 4.x:: using Ruby 1.9.3 / 2.0
-ActiveRecord 3.x:: using Ruby 1.8.7 / 1.9.x / 2.0
-ActiveRecord 2.3.x (deprecated):: using Ruby 1.8.6 / 1.8.7
+ActiveRecord 4.2:: using Ruby 2.1 and higher
+
+For those using a previous version of ActiveRecord or Ruby, use the v0.3.2 version of the gem.
 
 == Why?
 

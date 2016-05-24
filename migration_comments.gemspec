@@ -18,18 +18,11 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_runtime_dependency 'activerecord', '>= 2.3.2'
+  s.add_runtime_dependency 'activerecord', '>= 4.2.0'
 
-  # for development, we are testing against the 'annotate' gem
-  # however, the comments should work with the original 'annotate_models' plugin as well at:
-  #  http://repo.pragprog.com/svn/Public/plugins/annotate_models
-  # provided the environment is not loaded until _after_ the AnnotateModels module is declared
-  s.add_development_dependency 'annotate', '~> 2.5.0'
-
-  # add / replace with other adapter(s) as needed
+  s.add_development_dependency 'annotate', '~> 2.7.0'
   s.add_development_dependency 'pg'
-  # s.add_development_dependency 'postgres-pr'
-  # s.add_development_dependency 'mysql'
   s.add_development_dependency 'mysql2'
   s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'minitest-byebug'
 end

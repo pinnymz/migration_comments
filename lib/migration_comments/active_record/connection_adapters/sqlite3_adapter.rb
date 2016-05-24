@@ -1,40 +1,50 @@
 module MigrationComments::ActiveRecord::ConnectionAdapters
   module SQLite3Adapter
-    include AbstractSQLiteAdapter
 
-    def self.included(base)
-      base.class_eval do
-        alias_method_chain :columns, :migration_comments
-        alias_method_chain :copy_table, :migration_comments
-        alias_method_chain :change_column, :migration_comments
+    def comments_supported?
+      true
+    end
+
+    def inline_comments?
+      true
+    end
+
+    def set_table_comment(table_name, comment_text)
+      alter_table(table_name, :comment => comment_text)
+    end
+
+    def set_column_comment(table_name, column_name, comment_text)
+      sql_type = primary_key(table_name) == column_name.to_s ?
+          :primary_key :
+          column_for(table_name, column_name).sql_type
+      change_column table_name, column_name, sql_type, :comment => comment_text
+    end
+
+    def retrieve_table_comment(table_name)
+      result = select_value(lookup_comment_sql(table_name))
+      $1 if result =~ /CREATE (?:TEMPORARY )?TABLE #{quote_table_name table_name} [^\(]*\/\*(.*)\*\/ \(/
+    end
+
+    def retrieve_column_comments(table_name, *column_names)
+      if column_names.empty?
+        return columns(table_name).inject({}) { |m, v| m[v.name.to_sym] = v.comment if v.comment.present?; m }
       end
+      result = select_value(lookup_comment_sql(table_name))
+      result =~ /^CREATE (?:TEMPORARY )?TABLE "\w*" [^\(]*(?:\/\*.*\*\/ )?\((.*)\)[^\)]*$/
+      col_defs = $1
+      comment_matches = col_defs.scan(/"([^",]+)"[^,]*\/\*(.+?)\*\//)
+      Hash[comment_matches.map{|col_name, comment| [col_name.to_sym, comment.presence] }]
     end
 
     def create_table(table_name, options = {})
-      td = create_table_definition table_name, options[:temporary], options[:options]
-      td.base = self
-
-      unless options[:id] == false
-        pk = options.fetch(:primary_key) {
-          ActiveRecord::Base.get_primary_key table_name.to_s.singularize
-        }
-
-        td.primary_key pk, options.fetch(:id, :primary_key), options
+      super(table_name, options) do |td|
+        td.comment options[:comment] if options.has_key?(:comment)
+        yield td if block_given?
       end
-      td.comment options[:comment] if options.has_key?(:comment)
-
-      yield td if block_given?
-
-      if options[:force] && table_exists?(table_name)
-        drop_table(table_name, options)
-      end
-
-      execute schema_creation.accept td
-      td.indexes.each_pair { |c,o| add_index table_name, c, o }
     end
 
-    def columns_with_migration_comments(table_name)
-      cols = columns_without_migration_comments(table_name)
+    def columns(table_name)
+      cols = super(table_name)
       comments = retrieve_column_comments(table_name, *(cols.map(&:name)))
       cols.each do |col|
         col.comment = comments[col.name.to_sym] if comments.has_key?(col.name.to_sym)
@@ -42,34 +52,51 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       cols
     end
 
-    def copy_table_with_migration_comments(from, to, options = {}) #:nodoc:
-      from_primary_key = primary_key(from)
-      options[:id] = false
+    def copy_table(from, to, options = {}) #:nodoc:
       unless options.has_key?(:comment)
         table_comment = retrieve_table_comment(from)
-        options = options.merge(:comment => table_comment) if table_comment
+        options.merge!(comment: table_comment) if table_comment
       end
-      create_table(to, options) do |definition|
-        @definition = definition
-        @definition.primary_key(from_primary_key) if from_primary_key.present?
-        columns(from).each do |column|
-          column_name = options[:rename] ?
-              (options[:rename][column.name] ||
-                  options[:rename][column.name.to_sym] ||
-                  column.name) : column.name
-          next if column_name == from_primary_key
-
-          @definition.column(column_name, column.type,
-                             :limit => column.limit, :default => column.default,
-                             :precision => column.precision, :scale => column.scale,
-                             :null => column.null, :comment => column.comment)
+      super(from, to, options) do |definition|
+        retrieve_column_comments(from).each do |col_name, comment|
+          definition[col_name].comment = CommentDefinition.new(from, col_name, comment)
         end
-        yield @definition if block_given?
+        yield definition if block_given?
       end
-      copy_table_indexes(from, to, options[:rename] || {})
-      copy_table_contents(from, to,
-                          @definition.columns.map {|column| column.name},
-                          options[:rename] || {})
+    end
+
+    def change_column(table_name, column_name, type, options = {}) #:nodoc:
+      super(table_name, column_name, type, options)
+      if options.has_key?(:comment)
+        alter_table(table_name) do |definition|
+          definition[column_name].comment = CommentDefinition.new(table_name, column_name, options[:comment])
+        end
+      end
+    end
+
+    def comment_sql(comment_definition)
+      if comment_definition.nil? || comment_definition.comment_text.blank?
+        ""
+      else
+        " /*#{escaped_comment(comment_definition.comment_text)}*/"
+      end
+
+    end
+
+    def add_column_options!(sql, options)
+      super(sql, options)
+      if options.keys.include?(:comment)
+        sql << CommentDefinition.new(nil, nil, options[:comment]).to_sql
+      end
+    end
+
+    private
+    def escaped_comment(comment)
+      comment.gsub(/\*\//, "*-/")
+    end
+
+    def lookup_comment_sql(table_name)
+      "select sql from (select * from sqlite_master where type='table' union select * from sqlite_temp_master where type='table') where tbl_name = '#{table_name}'"
     end
   end
 end

@@ -1,13 +1,19 @@
 require 'minitest/autorun'
 
 require 'rubygems'
-gem 'activerecord', '>= 2.3.2'
+gem 'activerecord', '>= 4.2.0'
 require 'active_record'
 require 'yaml'
 
 CONFIGURATIONS = YAML::load(IO.read(File.join(File.dirname(__FILE__), 'config/database.yml')))
 
 ENV['DB'] ||= 'postgres' # override as needed
+
+unless ENV['DEBUG']
+  require 'minitest/byebug'
+  ActiveRecord::Migration.verbose = false
+  $VERBOSE=false
+end
 
 ActiveRecord::Base.establish_connection(CONFIGURATIONS[ENV['DB']])
 
