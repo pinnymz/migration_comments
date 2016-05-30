@@ -1,12 +1,5 @@
 module MigrationComments::ActiveRecord::ConnectionAdapters
   module PostgreSQLAdapter
-    def self.included(base)
-      base.class_eval do
-        alias_method_chain :create_table, :migration_comments
-        alias_method_chain :add_column, :migration_comments
-        alias_method_chain :change_column, :migration_comments
-      end
-    end
 
     def comments_supported?
       true
@@ -18,48 +11,45 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
 
     # Set a comment on a table
     def set_table_comment(table_name, comment_text)
-      execute CommentDefinition.new(self, table_name, nil, comment_text).to_sql
+      execute comment_sql(CommentDefinition.new(table_name, nil, comment_text))
     end
 
     # Set a comment on a column
     def set_column_comment(table_name, column_name, comment_text)
-      execute CommentDefinition.new(self, table_name, column_name, comment_text).to_sql
+      execute comment_sql(CommentDefinition.new(table_name, column_name, comment_text))
     end
 
     def retrieve_table_comment(table_name)
-      result = select_rows(table_comment_sql(table_name))
-      result[0].nil? ? nil : result[0][0]
+      select_value(table_comment_sql(table_name)).presence
     end
 
     def retrieve_column_comments(table_name, *column_names)
       result = select_rows(column_comment_sql(table_name, *column_names))
-      return {} if result.nil?
-      return result.inject({}){|m, row| m[row[0].to_sym] = row[1]; m}
+      Hash[result.map{|row| [row[0].to_sym, row[1].presence]}]
     end
 
-    def create_table_with_migration_comments(table_name, options = {})
+    def create_table(table_name, options = {})
       local_table_definition = nil
-      create_table_without_migration_comments(table_name, options) do |td|
+      super(table_name, options) do |td|
         local_table_definition = td
-        local_table_definition.base = self
         local_table_definition.comment options[:comment] if options.has_key?(:comment)
         yield td if block_given?
       end
       comments = local_table_definition.collect_comments(table_name)
       comments.each do |comment_definition|
-        execute comment_definition.to_sql
+        execute comment_sql(comment_definition)
       end
     end
 
-    def add_column_with_migration_comments(table_name, column_name, type, options = {})
-      add_column_without_migration_comments(table_name, column_name, type, options)
+    def add_column(table_name, column_name, type, options = {})
+      super(table_name, column_name, type, options)
       if options[:comment]
         set_column_comment(table_name, column_name, options[:comment])
       end
     end
 
-    def change_column_with_migration_comments(table_name, column_name, type, options = {})
-      change_column_without_migration_comments(table_name, column_name, type, options)
+    def change_column(table_name, column_name, type, options = {})
+      super(table_name, column_name, type, options)
       if options.keys.include?(:comment)
         set_column_comment(table_name, column_name, options[:comment])
       end

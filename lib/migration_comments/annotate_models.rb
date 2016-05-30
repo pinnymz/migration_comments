@@ -1,18 +1,16 @@
 module MigrationComments
   module AnnotateModels
-    def self.included(base)
-      base.class_eval do
-        class << self
-          include ClassMethods
-          alias_method_chain :get_schema_info, :migration_comments
-        end
+    def self.prepended(base)
+      class << base
+        prepend ClassMethods
       end
     end
 
     module ClassMethods
-      def get_schema_info_with_migration_comments(*args)
-        info = get_schema_info_without_migration_comments(*args)
+      def get_schema_info(*args)
         klass = args[0]
+        klass.reset_column_information
+        info = super(*args)
         commented_info(klass, info)
       end
 

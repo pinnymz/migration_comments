@@ -8,8 +8,8 @@ postgres:
 mysql:
   adapter: mysql2
   database: migration_comments_test
-  user: root
-  password: password
+  username: root
+  password:
 
 sqlite:
   adapter: sqlite3

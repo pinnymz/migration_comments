@@ -6,7 +6,7 @@ class Sample < ActiveRecord::Base
   self.table_name = 'sample'
 end
 
-class AnnotateModelsTest < Minitest::Unit::TestCase
+class AnnotateModelsTest < Minitest::Test
   include TestHelper
 
   TEST_PREFIX = "== Schema Information"
@@ -19,17 +19,19 @@ class AnnotateModelsTest < Minitest::Unit::TestCase
     end
 
     result = AnnotateModels.get_schema_info(Sample, TEST_PREFIX)
+
+    string_token = ENV['DB'] == 'mysql' ? ':string(255)' : ':string     '
+
     expected = <<EOS
 # #{TEST_PREFIX}
 #
 # Table name: sample # a table comment
 #
 #  id     :integer          not null, primary key
-#  field1 :string(255)                            # a "comment" \\ that ' needs; escaping''
+#  field1 #{string_token}                            # a "comment" \\ that ' needs; escaping''
 #  field2 :integer
-#  field3 :string(255)      default(""), not null # third column comment
+#  field3 #{string_token}      default(""), not null # third column comment
 #
-
 EOS
     assert_equal expected, result
   end
