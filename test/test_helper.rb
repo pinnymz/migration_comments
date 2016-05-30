@@ -9,8 +9,9 @@ CONFIGURATIONS = YAML::load(IO.read(File.join(File.dirname(__FILE__), 'config/da
 
 ENV['DB'] ||= 'postgres' # override as needed
 
-unless ENV['DEBUG']
+if ENV['DEBUG']
   require 'minitest/byebug'
+else
   ActiveRecord::Migration.verbose = false
   $VERBOSE=false
 end
