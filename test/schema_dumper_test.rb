@@ -14,9 +14,17 @@ class SchemaDumperTest < Minitest::Test
     ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, dest)
     dest.rewind
     result = dest.read
-    expected = if ENV['DB'] == 'mysql'
+    expected = if ENV['DB'] == 'mysql' && ::ActiveRecord::VERSION::MAJOR >= 5
       <<-EOS
-  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+  create_table "sample", force: :cascade, options: __OPTIONS__, comment: "a table comment" do |t|
+    t.string  "field1",                           #{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
+    t.integer "field2"
+    t.string  "field3", #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
+  end
+      EOS
+    elsif ENV['DB'] == 'mysql'
+      <<-EOS
+  create_table "sample", force: :cascade, comment: "a table comment" do |t|
     t.string  "field1", #{render_kv_pair(:limit, 255)},                           #{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
     t.integer "field2", #{render_kv_pair(:limit, 4)}
     t.string  "field3", #{render_kv_pair(:limit, 255)}, #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
@@ -24,14 +32,14 @@ class SchemaDumperTest < Minitest::Test
       EOS
     else
       <<-EOS
-  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+  create_table "sample", force: :cascade, comment: "a table comment" do |t|
     t.string  "field1",                           #{render_kv_pair(:comment, %{a \"comment\" \\ that ' needs; escaping''})}
     t.integer "field2"
     t.string  "field3", #{render_kv_pair(:default, "")}, #{render_kv_pair(:null, false)}, #{render_kv_pair(:comment, "third column comment")}
   end
       EOS
     end
-    assert_match(/#{Regexp.escape(expected).gsub(/__SPACES__/, " +")}/, result)
+    assert_match(/#{Regexp.escape(expected).gsub(/__OPTIONS__/, %Q("ENGINE=InnoDB[^"]*"))}/, result)
   end
 
   def test_dump_with_no_columns
@@ -44,12 +52,18 @@ class SchemaDumperTest < Minitest::Test
     ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, dest)
     dest.rewind
     result = dest.read
-    expected = <<EOS
-  create_table "sample", #{render_kv_pair(:force, :cascade)}, #{render_kv_pair(:comment, "a table comment")} do |t|
+    expected = if ENV['DB'] == 'mysql' && ::ActiveRecord::VERSION::MAJOR >= 5
+      <<-EOS
+  create_table "sample", force: :cascade, options: __OPTIONS__, comment: "a table comment" do |t|
+      EOS
+    else
+      <<-EOS
+  create_table "sample", force: :cascade, comment: "a table comment" do |t|
   end
-EOS
+      EOS
+    end
 
-    assert_match(/#{Regexp.escape expected}/, result)
+    assert_match(/#{Regexp.escape(expected).gsub(/__OPTIONS__/, %Q("ENGINE=InnoDB[^"]*"))}/, result)
   end
 
   def test_schema_dump_with_custom_type_error_for_pg

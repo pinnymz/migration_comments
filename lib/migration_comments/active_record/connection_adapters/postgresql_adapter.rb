@@ -19,6 +19,13 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       execute comment_sql(CommentDefinition.new(table_name, column_name, comment_text))
     end
 
+    if ::ActiveRecord::VERSION::MAJOR >= 5
+      def change_column_comment(table_name, column_name, comment)
+        comment_text = comment.respond_to?(:comment_text) ? comment.comment_text : comment
+        super(table_name, column_name, comment_text)
+      end
+    end
+
     def retrieve_table_comment(table_name)
       select_value(table_comment_sql(table_name)).presence
     end
@@ -32,7 +39,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       local_table_definition = nil
       super(table_name, options) do |td|
         local_table_definition = td
-        local_table_definition.comment options[:comment] if options.has_key?(:comment)
+        local_table_definition.comment = options[:comment] if options.has_key?(:comment)
         yield td if block_given?
       end
       comments = local_table_definition.collect_comments(table_name)
