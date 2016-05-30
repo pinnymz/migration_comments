@@ -4,9 +4,18 @@ Comments for your migrations
 
 Tested on:
 
+ActiveRecord 5.0:: Using Ruby 2.2 and higher
 ActiveRecord 4.2:: using Ruby 2.1 and higher
 
-For those using a previous version of ActiveRecord or Ruby, use the v0.3.2 version of the gem.
+Status: {<img src="https://travis-ci.org/pinnymz/migration_comments.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/pinnymz/migration_comments]
+
+== **IMPORTANT UPDATE**
+
+ActiveRecord 5.0 is introducing baked-in comment support, although not all features provided by this project have yet been completely implemented.
+This is expected to be rectified by ActiveRecord 5.1, and as such ActiveRecord 5.0 will likely be the last version for which this gem will work (or be needed).
+ActiveRecord 5.0 itself will be supported by this project, but many features are overlapping and you may find that you won't need it at all.
+
+For those using a version of ActiveRecord prior to 4.2 or of Ruby prior to 2.1, please use the v0.3.2 version of the gem.
 
 == Why?
 
