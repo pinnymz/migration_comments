@@ -9,7 +9,8 @@ module MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter
     def add_column_options!(sql, options)
       sql = super(sql, options)
       if options.keys.include?(:comment) && !@conn.independent_comments?
-        sql << MigrationComments::ActiveRecord::ConnectionAdapters::CommentDefinition.new(nil, nil, options[:comment]).to_sql
+        comment_definition = MigrationComments::ActiveRecord::ConnectionAdapters::CommentDefinition.new(nil, nil, options[:comment])
+        sql << @conn.comment_sql(comment_definition)
       end
       sql
     end
@@ -17,7 +18,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter
     def visit_TableDefinition(o)
       if @conn.inline_comments?
         create_sql = "CREATE#{' TEMPORARY' if o.temporary} TABLE "
-        create_sql << "#{quote_table_name(o.name)}#{o.table_comment} ("
+        create_sql << "#{quote_table_name(o.name)}#{@conn.comment_sql(o.table_comment)} ("
         create_sql << o.columns.map { |c| accept c }.join(', ')
         create_sql << ") #{o.options}"
         create_sql
@@ -27,7 +28,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters::AbstractAdapter
     end
 
     def visit_ColumnDefinition(o)
-      if @conn.inline_comments?
+      if @conn.inline_comments? && o.type.to_sym == :primary_key
         sql_type = type_to_sql(o.type.to_sym, o.limit, o.precision, o.scale)
         column_sql = "#{quote_column_name(o.name)} #{sql_type}"
         add_column_options!(column_sql, column_options(o))

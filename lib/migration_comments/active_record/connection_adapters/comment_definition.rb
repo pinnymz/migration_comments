@@ -6,19 +6,9 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
           "set_column_comment :#{table_name}, :#{column_name}, %{#{comment_text}}"
     end
 
-    def to_sql
-      adapter.comment_sql(self)
-    end
-    alias_method :to_s, :to_sql
-
     def table_comment?
       column_name.blank?
     end
 
-    private
-
-    def adapter
-      ActiveRecord::Base.connection
-    end
   end
 end

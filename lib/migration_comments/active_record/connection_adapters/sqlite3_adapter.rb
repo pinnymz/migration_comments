@@ -86,7 +86,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     def add_column_options!(sql, options)
       super(sql, options)
       if options.keys.include?(:comment)
-        sql << CommentDefinition.new(nil, nil, options[:comment]).to_sql
+        sql << comment_sql(CommentDefinition.new(nil, nil, options[:comment]))
       end
     end
 

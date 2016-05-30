@@ -11,12 +11,12 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
 
     # Set a comment on a table
     def set_table_comment(table_name, comment_text)
-      execute CommentDefinition.new(table_name, nil, comment_text).to_sql
+      execute comment_sql(CommentDefinition.new(table_name, nil, comment_text))
     end
 
     # Set a comment on a column
     def set_column_comment(table_name, column_name, comment_text)
-      execute CommentDefinition.new(table_name, column_name, comment_text).to_sql
+      execute comment_sql(CommentDefinition.new(table_name, column_name, comment_text))
     end
 
     def retrieve_table_comment(table_name)
@@ -37,7 +37,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
       end
       comments = local_table_definition.collect_comments(table_name)
       comments.each do |comment_definition|
-        execute comment_definition.to_sql
+        execute comment_sql(comment_definition)
       end
     end
 
