@@ -3,6 +3,7 @@ module MigrationComments::ActiveRecord
     include MigrationComments::SchemaFormatter
 
     def table(table, stream)
+      return super if ::ActiveRecord::VERSION::MAJOR >= 5 && @connection.class.name !~ /SQLite/
       tbl_stream = StringIO.new
       super(table, tbl_stream)
       tbl_stream.rewind
@@ -38,7 +39,7 @@ module MigrationComments::ActiveRecord
         elsif table_line == index && table_comment.present?
           block_init = " do |t|"
           line.chomp!(block_init) << ", " << render_comment(table_comment) << block_init
-        elsif col_names[index]
+        elsif col_names[index] && ::ActiveRecord::VERSION::MAJOR < 5
           comment = column_comments[col_names[index]]
           line << ',' << ' ' * (len - line.length) << render_comment(comment) unless comment.blank?
         end

@@ -1,10 +1,9 @@
 module MigrationComments::ActiveRecord::ConnectionAdapters
   module TableDefinition
-    attr_accessor :table_comment
+    attr_accessor :comment
 
-    def comment(text)
-      self.table_comment = CommentDefinition.new(nil, nil, text)
-      self
+    def comment=(text)
+      @comment = text.respond_to?(:comment_text) ? text : CommentDefinition.new(nil, nil, text)
     end
 
     def column(name, type, options = {})
@@ -17,7 +16,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
     end
 
     def collect_comments(table_name)
-      comments = [table_comment] + columns.map(&:comment)
+      comments = [comment] + columns.map(&:comment)
       comments.compact!
       comments.each{|comment| comment.table_name = table_name }
     end

@@ -38,7 +38,7 @@ module MigrationComments::ActiveRecord::ConnectionAdapters
 
     def create_table(table_name, options = {})
       super(table_name, options) do |td|
-        td.comment options[:comment] if options.has_key?(:comment)
+        td.comment = options[:comment] if options.has_key?(:comment)
         yield td if block_given?
       end
     end
