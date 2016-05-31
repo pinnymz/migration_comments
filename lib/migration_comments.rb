@@ -37,7 +37,7 @@ module MigrationComments
         unless adapter_class.descendants.include?(mc_class)
           adapter_class.prepend mc_class
         end
-      rescue Exception => ex
+      rescue ::LoadError
       end
     end
 
@@ -50,7 +50,7 @@ module MigrationComments
       unless gem_class.ancestors.include?(mc_class)
         gem_class.prepend mc_class
       end
-    rescue Exception => ex
+    rescue ::LoadError
       # if we got here, don't bother installing comments into annotations
     end
   end
