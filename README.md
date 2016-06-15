@@ -56,7 +56,7 @@ Or you can use the `change_table` macro...
 ```ruby
 def self.up
   change_table :table_name do |t|
-    t.comment "A table comment"
+    t.comment = "A table comment"
     t.change_comment :column_name, "A column comment"
   end
 end
@@ -86,11 +86,41 @@ Or you can combine these commands while modifying a table...
 ```ruby
 def self.up
   change_table :existing_table do |t|
-    t.comment nil                                       # remove an existing table comment
+    t.comment = nil                                       # remove an existing table comment
     t.string :new_column, :comment => "a new column"    # add a new column with a comment
     t.change_comment :existing_column, nil              # remove a comment on an existing column
     t.integer :another_existing_column, :comment => nil # remove a comment on an existing column while modifying the column type
     t.boolean :column_with_comment                      # modify an existing column without altering the comment
+  end
+end
+```
+
+## Difference between v0.3.x and v0.4.x
+
+To accommodate Rails 5.0, a backwards-incompatible change was made to how table comments are set in `v.0.4.0` and onwards. 
+
+Newer versions of the gem set the comment via an accessor attribute, and thus use an attribute assignment (`=`) to set the comment's value.
+
+In contrast, older versions of the gem (`v0.3.2` and prior) used a method call. 
+
+Examples below:
+
+### Setting table comments in v0.4.0 and above
+
+```ruby
+def self.up
+  change_table :existing_table do |t|
+    t.comment = "a new comment"
+  end
+end
+```
+
+### Setting table comments in older versions
+
+```ruby
+def self.up
+  change_table :existing_table do |t|
+    t.comment "a new comment"
   end
 end
 ```
