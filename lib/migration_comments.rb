@@ -14,6 +14,8 @@ require 'migration_comments/active_record/connection_adapters/mysql2_adapter'
 require 'migration_comments/active_record/connection_adapters/postgresql_adapter'
 require 'migration_comments/active_record/connection_adapters/sqlite3_adapter'
 
+require 'active_support/core_ext/class/subclasses'
+
 module MigrationComments
   def self.setup
 
