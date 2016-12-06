@@ -37,6 +37,20 @@ they'll be available at any point in your project.  Additionally, if you are usi
 'annotate'[https://github.com/ctran/annotate_models] gem, these comments will be added to the annotations
 that are generated within your <tt>_model_.rb</tt> file.
 
+== Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'migration_comments', '~> 0.3.2'
+
+And then execute:
+
+    $ bundle
+  
+Or install it yourself as:
+
+    $ gem install migration_comments
+
 == Examples
 
 To add a comment to an existing structure...
