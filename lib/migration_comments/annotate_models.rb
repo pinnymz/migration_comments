@@ -25,10 +25,25 @@ module MigrationComments
         len = lines.select{|l| l =~ column_regex}.map{|l| l.length}.max
         lines.each do |line|
           if line =~ /# Table name: |# table \+\w+\+ /
-            line << " # #{table_comment}" if table_comment
+            table_comment_lines = table_comment.chomp.split($/)
+            space_size = line.length - 1
+            first_comment = table_comment_lines.shift
+            line << " # #{first_comment}" if table_comment
+
+            table_comment_lines.each do |comment_line|
+              line << $/ << "#" << " " * space_size << " # #{comment_line}"
+            end
           elsif line =~ column_regex
             comment = column_comments[$1.to_sym]
-            line << " " * (len - line.length) << " # #{comment}" if comment
+            next unless comment
+
+            comment_lines = comment.chomp.split($/)
+            first_comment = comment_lines.shift
+            line << " " * (len - line.length) << " # #{first_comment}"
+
+            comment_lines.each do |comment_line|
+              line << $/ << "#" << " " * (len - 1) << " # #{comment_line}"
+            end
           end
         end
         lines.join($/) + $/
