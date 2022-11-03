@@ -23,7 +23,7 @@ module MigrationComments
     base_names.each do |base_name|
       ar_class = "ActiveRecord::#{base_name}".constantize
       mc_class = "MigrationComments::ActiveRecord::#{base_name}".constantize
-      unless ar_class.descendants.include?(mc_class)
+      unless !ar_class.respond_to?(:descendants) && ar_class.descendants.include?(mc_class)
         ar_class.prepend mc_class
       end
     end
